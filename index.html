@@ -283,6 +283,7 @@
   .trainer-body {
     display: grid;
     grid-template-columns: 1fr 340px;
+    grid-template-rows: 1fr auto;
     flex: 1;
     overflow: hidden;
   }
@@ -290,6 +291,7 @@
   /* Camera area */
   .cam-wrap {
     position: relative;
+    height: 60vh;
     background: #000;
     overflow: hidden;
   }
@@ -1354,12 +1356,12 @@ async function initPose() {
     locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
   });
   pose.setOptions({
-    modelComplexity: 1,
+    modelComplexity: 2,
     smoothLandmarks: true,
     enableSegmentation: false,
     smoothSegmentation: false,
-    minDetectionConfidence: 0.5,
-    minTrackingConfidence: 0.5
+    minDetectionConfidence: 0.7,
+    minTrackingConfidence: 0.7
   });
   pose.onResults(onPoseResults);
   await pose.initialize();
