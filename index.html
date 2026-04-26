@@ -1,0 +1,2050 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AasanAI — Virtual Fitness & Endurance Trainer</title>
+
+<!-- MediaPipe Pose -->
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+
+<!-- Google Fonts -->
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #070A0F;
+    --surface: #0E1420;
+    --surface2: #161D2E;
+    --border: #1E2A40;
+    --accent: #00E5FF;
+    --accent2: #7B61FF;
+    --green: #00FF88;
+    --red: #FF3B6B;
+    --yellow: #FFD23F;
+    --text: #E8EDF5;
+    --muted: #5A6A85;
+    --glow: 0 0 24px rgba(0,229,255,0.25);
+    --glow-green: 0 0 20px rgba(0,255,136,0.3);
+    --glow-red: 0 0 20px rgba(255,59,107,0.3);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── LANDING PAGE ── */
+  #landing {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #landing::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 20%, rgba(123,97,255,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 80% 80%, rgba(0,229,255,0.10) 0%, transparent 60%),
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(30,42,64,0.4) 39px, rgba(30,42,64,0.4) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(30,42,64,0.4) 39px, rgba(30,42,64,0.4) 40px);
+    pointer-events: none;
+  }
+
+  .logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+
+  .logo-icon {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    box-shadow: var(--glow);
+  }
+
+  .logo-text {
+    font-size: 2.6rem;
+    font-weight: 900;
+    letter-spacing: -1px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .tagline {
+    font-size: 1.05rem;
+    color: var(--muted);
+    margin-bottom: 52px;
+    letter-spacing: 0.06em;
+    font-weight: 400;
+    text-transform: uppercase;
+  }
+
+  .selection-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px 44px;
+    width: 100%;
+    max-width: 520px;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+  }
+
+  .selection-card h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 24px;
+  }
+
+  .mode-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .mode-btn {
+    background: var(--surface2);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mode-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    opacity: 0;
+    transition: opacity 0.2s;
+    border-radius: 14px;
+  }
+
+  .mode-btn:hover::after { opacity: 0.06; }
+  .mode-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+  .mode-btn.active {
+    border-color: var(--accent);
+    box-shadow: var(--glow);
+    background: rgba(0,229,255,0.05);
+  }
+
+  .mode-btn .mode-icon { font-size: 2rem; margin-bottom: 8px; display: block; }
+  .mode-btn .mode-label { font-size: 0.92rem; font-weight: 600; color: var(--text); }
+  .mode-btn .mode-sub { font-size: 0.75rem; color: var(--muted); margin-top: 3px; }
+
+  .exercise-select-wrap {
+    margin-bottom: 28px;
+    display: none;
+  }
+
+  .exercise-select-wrap.visible { display: block; }
+
+  .exercise-select-wrap label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+
+  select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    padding: 12px 16px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235A6A85' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 44px;
+  }
+
+  select:focus { border-color: var(--accent); }
+  select option { background: #0E1420; }
+
+  .start-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    color: #07090D;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 8px 32px rgba(0,229,255,0.3);
+  }
+
+  .start-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,229,255,0.4); }
+  .start-btn:active { transform: translateY(0); }
+  .start-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .disclaimer {
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 20px;
+    line-height: 1.6;
+  }
+
+  /* ── TRAINER PAGE ── */
+  #trainer { display: none; flex-direction: column; height: 100vh; }
+
+  .trainer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .trainer-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .trainer-title .badge {
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: #07090D;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .back-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .trainer-body {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* Camera area */
+  .cam-wrap {
+    position: relative;
+    background: #000;
+    overflow: hidden;
+  }
+
+  #videoElement {
+    position: absolute;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1);
+    opacity: 0;
+  }
+
+  #poseCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    transform: scaleX(-1);
+  }
+
+  .cam-overlay-top {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    z-index: 10;
+    background: linear-gradient(to bottom, rgba(7,10,15,0.8) 0%, transparent 100%);
+  }
+
+  .cam-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(7,10,15,0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 6px 14px;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--muted);
+    animation: pulse 2s infinite;
+  }
+  .status-dot.active { background: var(--green); }
+  .status-dot.warning { background: var(--red); }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .cam-timer-box {
+    background: rgba(7,10,15,0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 6px 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .posture-feedback {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    text-align: center;
+    min-width: 240px;
+  }
+
+  .feedback-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    backdrop-filter: blur(12px);
+    border: 1.5px solid;
+    transition: all 0.3s;
+    white-space: nowrap;
+  }
+
+  .feedback-pill.correct {
+    background: rgba(0,255,136,0.12);
+    border-color: var(--green);
+    color: var(--green);
+    box-shadow: var(--glow-green);
+  }
+
+  .feedback-pill.incorrect {
+    background: rgba(255,59,107,0.12);
+    border-color: var(--red);
+    color: var(--red);
+    box-shadow: var(--glow-red);
+  }
+
+  .feedback-pill.neutral {
+    background: rgba(255,210,63,0.10);
+    border-color: var(--yellow);
+    color: var(--yellow);
+  }
+
+  .cam-overlay-bottom {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 16px 20px;
+    background: linear-gradient(to top, rgba(7,10,15,0.85) 0%, transparent 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    z-index: 10;
+  }
+
+  .ctrl-btn {
+    background: rgba(14,20,32,0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 10px 22px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .ctrl-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .ctrl-btn.primary { background: var(--accent); color: #07090D; border-color: var(--accent); font-weight: 800; }
+  .ctrl-btn.primary:hover { background: #00c8e0; }
+  .ctrl-btn.danger { border-color: var(--red); color: var(--red); }
+
+  /* Camera init overlay */
+  .cam-init-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    z-index: 20;
+    gap: 16px;
+  }
+
+  .cam-init-overlay .spinner {
+    width: 48px; height: 48px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .cam-init-overlay p { color: var(--muted); font-size: 0.9rem; }
+
+  /* ── RIGHT PANEL ── */
+  .right-panel {
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .panel-section {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .panel-section:last-child { border-bottom: none; }
+
+  .section-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  /* Metrics */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .metric-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    text-align: center;
+  }
+
+  .metric-box .m-val {
+    font-family: 'Space Mono', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .metric-box .m-label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* Score ring */
+  .score-wrap {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .score-ring-container { position: relative; flex-shrink: 0; }
+
+  .score-ring-container svg { transform: rotate(-90deg); }
+
+  .score-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .score-center .score-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .score-center .score-label {
+    font-size: 0.6rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+  }
+
+  .score-breakdown { flex: 1; }
+
+  .score-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.78rem;
+    margin-bottom: 6px;
+  }
+
+  .score-row-label { color: var(--muted); }
+  .score-row-val { font-weight: 700; color: var(--text); font-family: 'Space Mono', monospace; }
+
+  .mini-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+
+  .mini-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    transition: width 0.5s ease;
+  }
+
+  /* Posture guide */
+  .posture-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+
+  .posture-card h4 {
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  .cue-list { list-style: none; }
+  .cue-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 5px;
+    line-height: 1.4;
+  }
+
+  .cue-list li::before {
+    content: '→';
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* TMT result */
+  #tmt-result {
+    display: none;
+    padding: 20px;
+  }
+
+  .tmt-card {
+    background: var(--surface2);
+    border: 1px solid var(--accent);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--glow);
+    text-align: center;
+  }
+
+  .tmt-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .tmt-mets {
+    font-family: 'Space Mono', monospace;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--green);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .tmt-sub {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .tmt-interpretation {
+    display: inline-block;
+    padding: 6px 18px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .tmt-detail {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* Results overlay */
+  #results-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(7,10,15,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #results-overlay.show { display: flex; }
+
+  .results-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+  }
+
+  .results-card h2 {
+    font-size: 1.5rem;
+    font-weight: 900;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .results-card .session-name {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 28px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .big-score {
+    font-family: 'Space Mono', monospace;
+    font-size: 5rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .score-grade {
+    display: inline-block;
+    padding: 4px 16px;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    margin-bottom: 28px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .results-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .result-stat {
+    background: var(--surface2);
+    border-radius: 12px;
+    padding: 14px 10px;
+  }
+
+  .result-stat .rs-val {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .result-stat .rs-label {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 4px;
+  }
+
+  .results-tmt {
+    background: rgba(0,229,255,0.06);
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 24px;
+    text-align: left;
+  }
+
+  .results-tmt h4 {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+  }
+
+  .tmt-result-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    margin-bottom: 4px;
+  }
+
+  .tmt-result-row span:first-child { color: var(--muted); }
+  .tmt-result-row span:last-child { font-weight: 700; font-family: 'Space Mono', monospace; }
+
+  .results-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .results-actions button {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+
+  .btn-retry {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border) !important;
+  }
+
+  .btn-retry:hover { border-color: var(--accent) !important; color: var(--accent); }
+
+  .btn-home {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #07090D;
+    font-weight: 800;
+  }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    .trainer-body { grid-template-columns: 1fr; }
+    .right-panel { max-height: 280px; }
+    .mode-grid { grid-template-columns: 1fr; }
+    .selection-card { padding: 28px 24px; }
+    .logo-text { font-size: 2rem; }
+  }
+
+  /* Loading screen */
+  #loading-screen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  #loading-screen.show { display: flex; }
+  #loading-screen p { color: var(--muted); font-size: 0.9rem; }
+
+  .load-bar {
+    width: 240px; height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .load-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 2px;
+    animation: loadAnim 2s ease-in-out infinite;
+  }
+
+  @keyframes loadAnim {
+    0% { width: 0%; margin-left: 0; }
+    50% { width: 70%; margin-left: 0; }
+    100% { width: 0%; margin-left: 100%; }
+  }
+
+  .angle-debug {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    z-index: 15;
+    display: none;
+  }
+</style>
+
+</head>
+<body>
+
+<!-- Loading Screen -->
+
+<div id="loading-screen">
+  <div class="logo-icon" style="width:64px;height:64px;font-size:32px;">🧘</div>
+  <p id="loading-msg">Initialising AasanAI…</p>
+  <div class="load-bar"><div class="load-bar-fill"></div></div>
+</div>
+
+<!-- ══════════ LANDING ══════════ -->
+
+<div id="landing">
+  <div class="logo-wrap">
+    <div class="logo-icon">🧘</div>
+    <div class="logo-text">AasanAI</div>
+  </div>
+  <div class="tagline">AI-Powered Yoga · Fitness · Endurance Trainer</div>
+
+  <div class="selection-card">
+    <h2>Select Your Session</h2>
+
+```
+<div class="mode-grid">
+  <div class="mode-btn" onclick="selectMode('yoga')" id="mode-yoga">
+    <span class="mode-icon">🙏</span>
+    <div class="mode-label">Yoga & Asanas</div>
+    <div class="mode-sub">Posture · Flexibility</div>
+  </div>
+  <div class="mode-btn" onclick="selectMode('exercise')" id="mode-exercise">
+    <span class="mode-icon">💪</span>
+    <div class="mode-label">Exercise</div>
+    <div class="mode-sub">Strength · Reps</div>
+  </div>
+  <div class="mode-btn" onclick="selectMode('cardio')" id="mode-cardio">
+    <span class="mode-icon">🏃</span>
+    <div class="mode-label">Cardio</div>
+    <div class="mode-sub">Endurance · Tempo</div>
+  </div>
+  <div class="mode-btn" onclick="selectMode('tmt')" id="mode-tmt">
+    <span class="mode-icon">❤️</span>
+    <div class="mode-label">Endurance Test</div>
+    <div class="mode-sub">TMT Surrogate</div>
+  </div>
+</div>
+
+<div class="exercise-select-wrap" id="exercise-select-wrap">
+  <label id="exercise-select-label">Choose Exercise</label>
+  <select id="exercise-select">
+    <option value="">— Select —</option>
+  </select>
+</div>
+
+<button class="start-btn" id="start-btn" onclick="startSession()" disabled>
+  Start Session →
+</button>
+
+<p class="disclaimer">
+  Camera access required. AasanAI runs entirely in your browser.<br>
+  No video is recorded or sent to any server.<br>
+  Consult a physician before starting any fitness program.
+</p>
+```
+
+  </div>
+</div>
+
+<!-- ══════════ TRAINER ══════════ -->
+
+<div id="trainer">
+  <div class="trainer-header">
+    <div class="trainer-title">
+      <span id="trainer-mode-icon">🧘</span>
+      <span id="trainer-title-text">Yoga Session</span>
+      <span class="badge" id="trainer-badge">LIVE</span>
+    </div>
+    <button class="back-btn" onclick="endSession()">✕ End Session</button>
+  </div>
+
+  <div class="trainer-body">
+    <!-- Camera -->
+    <div class="cam-wrap" id="cam-wrap">
+      <video id="videoElement" autoplay playsinline muted></video>
+      <canvas id="poseCanvas"></canvas>
+
+```
+  <div class="cam-init-overlay" id="cam-init-overlay">
+    <div class="spinner"></div>
+    <p id="cam-status-msg">Requesting camera…</p>
+  </div>
+
+  <div class="cam-overlay-top">
+    <div class="cam-status">
+      <div class="status-dot" id="status-dot"></div>
+      <span id="status-text">Initialising</span>
+    </div>
+    <div class="cam-timer-box" id="timer-display">00:00</div>
+  </div>
+
+  <div class="posture-feedback" id="posture-feedback">
+    <div class="feedback-pill neutral" id="feedback-pill">
+      <span id="feedback-icon">⏳</span>
+      <span id="feedback-text">Get into position</span>
+    </div>
+  </div>
+
+  <div class="angle-debug" id="angle-debug"></div>
+
+  <div class="cam-overlay-bottom">
+    <button class="ctrl-btn" onclick="togglePause()" id="pause-btn">⏸ Pause</button>
+    <button class="ctrl-btn primary" onclick="nextExercise()" id="next-btn">Next →</button>
+    <button class="ctrl-btn danger" onclick="endSession()">Finish</button>
+  </div>
+</div>
+
+<!-- Right Panel -->
+<div class="right-panel">
+  <!-- Metrics -->
+  <div class="panel-section">
+    <div class="section-label">Live Metrics</div>
+    <div class="metrics-grid">
+      <div class="metric-box">
+        <div class="m-val" id="rep-count">0</div>
+        <div class="m-label">Reps</div>
+      </div>
+      <div class="metric-box">
+        <div class="m-val" id="hold-time">0s</div>
+        <div class="m-label">Hold Time</div>
+      </div>
+      <div class="metric-box">
+        <div class="m-val" id="correct-count">0</div>
+        <div class="m-label">Correct</div>
+      </div>
+      <div class="metric-box">
+        <div class="m-val" id="accuracy-pct">—</div>
+        <div class="m-label">Accuracy</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Score -->
+  <div class="panel-section">
+    <div class="section-label">Session Score</div>
+    <div class="score-wrap">
+      <div class="score-ring-container">
+        <svg width="90" height="90" viewBox="0 0 90 90">
+          <circle cx="45" cy="45" r="38" stroke="#1E2A40" stroke-width="8" fill="none"/>
+          <circle cx="45" cy="45" r="38" stroke="url(#scoreGrad)" stroke-width="8" fill="none"
+            stroke-linecap="round" stroke-dasharray="238.76" stroke-dashoffset="238.76"
+            id="score-ring" style="transition:stroke-dashoffset 0.6s ease"/>
+          <defs>
+            <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#7B61FF"/>
+              <stop offset="100%" style="stop-color:#00E5FF"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="score-center">
+          <div class="score-num" id="score-num">0</div>
+          <div class="score-label">Score</div>
+        </div>
+      </div>
+      <div class="score-breakdown">
+        <div class="score-row">
+          <span class="score-row-label">Form</span>
+          <span class="score-row-val" id="score-form">0</span>
+        </div>
+        <div class="mini-bar"><div class="mini-bar-fill" id="bar-form" style="width:0%"></div></div>
+        <div class="score-row">
+          <span class="score-row-label">Endurance</span>
+          <span class="score-row-val" id="score-endurance">0</span>
+        </div>
+        <div class="mini-bar"><div class="mini-bar-fill" id="bar-endurance" style="width:0%"></div></div>
+        <div class="score-row">
+          <span class="score-row-label">Consistency</span>
+          <span class="score-row-val" id="score-consistency">0</span>
+        </div>
+        <div class="mini-bar"><div class="mini-bar-fill" id="bar-consistency" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Current Exercise Guide -->
+  <div class="panel-section" id="guide-section">
+    <div class="section-label">Exercise Guide</div>
+    <div class="posture-card">
+      <h4 id="guide-title">Mountain Pose (Tadasana)</h4>
+      <ul class="cue-list" id="guide-cues">
+        <li>Stand tall, feet together</li>
+        <li>Arms at sides, palms forward</li>
+        <li>Chin parallel to floor</li>
+        <li>Breathe slowly and deeply</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- TMT Panel (hidden unless TMT mode) -->
+  <div id="tmt-panel" style="display:none;" class="panel-section">
+    <div class="section-label">TMT Surrogate</div>
+    <div class="posture-card">
+      <h4>Step Test Protocol</h4>
+      <ul class="cue-list">
+        <li>Step up and down repeatedly</li>
+        <li>Maintain steady cadence</li>
+        <li>Target: 3 minutes continuous</li>
+        <li>Score reflects estimated METs</li>
+      </ul>
+    </div>
+    <div id="tmt-live" style="margin-top:12px;">
+      <div class="score-row"><span class="score-row-label">Estimated METs</span><span class="score-row-val" id="tmt-mets-live">—</span></div>
+      <div class="score-row"><span class="score-row-label">Category</span><span class="score-row-val" id="tmt-cat-live">—</span></div>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- Results Overlay -->
+
+<div id="results-overlay">
+  <div class="results-card">
+    <h2>Session Complete!</h2>
+    <div class="session-name" id="result-session-name">Yoga Session</div>
+
+```
+<div class="big-score" id="result-big-score">—</div>
+<div class="score-grade" id="result-grade">—</div>
+
+<div class="results-stats">
+  <div class="result-stat">
+    <div class="rs-val" id="result-reps">0</div>
+    <div class="rs-label">Total Reps</div>
+  </div>
+  <div class="result-stat">
+    <div class="rs-val" id="result-time">0:00</div>
+    <div class="rs-label">Duration</div>
+  </div>
+  <div class="result-stat">
+    <div class="rs-val" id="result-accuracy">0%</div>
+    <div class="rs-label">Accuracy</div>
+  </div>
+</div>
+
+<div class="results-tmt" id="result-tmt-section">
+  <h4>🫀 TMT Surrogate Report</h4>
+  <div class="tmt-result-row">
+    <span>Estimated METs</span><span id="result-mets">—</span>
+  </div>
+  <div class="tmt-result-row">
+    <span>Functional Capacity</span><span id="result-fc">—</span>
+  </div>
+  <div class="tmt-result-row">
+    <span>Cardiovascular Category</span><span id="result-cv-cat">—</span>
+  </div>
+  <div class="tmt-result-row">
+    <span>Clinical Interpretation</span><span id="result-cv-interp">—</span>
+  </div>
+</div>
+
+<div class="results-actions">
+  <button class="btn-retry" onclick="retrySession()">↩ Retry</button>
+  <button class="btn-home" onclick="goHome()">🏠 Home</button>
+</div>
+```
+
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+//  EXERCISE LIBRARY
+// ════════════════════════════════════════════════════════════
+const EXERCISES = {
+  yoga: [
+    {
+      id: 'tadasana', name: 'Mountain Pose (Tadasana)', icon: '🏔️',
+      type: 'hold', targetHold: 30,
+      targetReps: 3, repHoldTime: 10,
+      cues: ['Stand tall, feet hip-width', 'Arms relaxed at sides', 'Chin parallel to floor', 'Breathe deeply — 4s in, 4s out'],
+      check: checkTadasana, scoringMatrix: { repScore: 15, holdBonus: 0.5, maxTime: 90 }
+    },
+    {
+      id: 'warrior1', name: 'Warrior I (Virabhadrasana I)', icon: '⚔️',
+      type: 'rep', targetReps: 5, repHoldTime: 5,
+      cues: ['Front knee at 90°', 'Back leg straight', 'Arms overhead, palms together', 'Hips squared forward'],
+      check: checkWarrior1, scoringMatrix: { repScore: 18, holdBonus: 0.8, maxTime: 120 }
+    },
+    {
+      id: 'tree', name: 'Tree Pose (Vrksasana)', icon: '🌳',
+      type: 'hold', targetHold: 20,
+      targetReps: 2, repHoldTime: 20,
+      cues: ['Balance on one foot', 'Other foot at inner thigh', 'Arms overhead or prayer', 'Focus on a fixed point'],
+      check: checkTree, scoringMatrix: { repScore: 20, holdBonus: 1, maxTime: 60 }
+    },
+    {
+      id: 'downdog', name: 'Downward Dog (Adho Mukha)', icon: '🐕',
+      type: 'hold', targetHold: 30,
+      targetReps: 4, repHoldTime: 8,
+      cues: ['Hips high, forming inverted V', 'Heels press toward floor', 'Arms straight, shoulder-width', 'Head between arms'],
+      check: checkDownDog, scoringMatrix: { repScore: 16, holdBonus: 0.6, maxTime: 120 }
+    },
+  ],
+  exercise: [
+    {
+      id: 'squat', name: 'Bodyweight Squat', icon: '🦵',
+      type: 'rep', targetReps: 15, repHoldTime: 0,
+      cues: ['Feet shoulder-width apart', 'Knees track over toes', 'Thighs parallel to floor', 'Keep chest up, back straight'],
+      check: checkSquat, scoringMatrix: { repScore: 5, holdBonus: 0, maxTime: 180 }
+    },
+    {
+      id: 'lunge', name: 'Reverse Lunge', icon: '🏋️',
+      type: 'rep', targetReps: 12, repHoldTime: 0,
+      cues: ['Step back, lower rear knee', 'Front knee at 90°', 'Torso upright', 'Push through front heel'],
+      check: checkLunge, scoringMatrix: { repScore: 6, holdBonus: 0, maxTime: 150 }
+    },
+    {
+      id: 'plank', name: 'Plank Hold', icon: '🪵',
+      type: 'hold', targetHold: 60,
+      targetReps: 3, repHoldTime: 20,
+      cues: ['Body in straight line', 'Core engaged tight', 'Shoulders over wrists', 'Don\'t let hips sag'],
+      check: checkPlank, scoringMatrix: { repScore: 10, holdBonus: 0.5, maxTime: 180 }
+    },
+    {
+      id: 'jumping_jack', name: 'Jumping Jacks', icon: '⭐',
+      type: 'rep', targetReps: 30, repHoldTime: 0,
+      cues: ['Jump feet wide, arms overhead', 'Return to center', 'Keep steady rhythm', 'Land softly'],
+      check: checkJumpingJack, scoringMatrix: { repScore: 2, holdBonus: 0, maxTime: 120 }
+    },
+  ],
+  cardio: [
+    {
+      id: 'high_knee', name: 'High Knees', icon: '🦵',
+      type: 'rep', targetReps: 40, repHoldTime: 0,
+      cues: ['Drive knees to hip height', 'Pump arms in sync', 'Stay on balls of feet', 'Maintain upright posture'],
+      check: checkHighKnee, scoringMatrix: { repScore: 2, holdBonus: 0, maxTime: 120 }
+    },
+    {
+      id: 'step_march', name: 'Step March', icon: '🚶',
+      type: 'rep', targetReps: 60, repHoldTime: 0,
+      cues: ['March in place steadily', 'Arms swing naturally', 'Lift knees to waist', 'Breathe rhythmically'],
+      check: checkMarch, scoringMatrix: { repScore: 1.5, holdBonus: 0, maxTime: 180 }
+    },
+  ],
+  tmt: [
+    {
+      id: 'tmt_step', name: 'TMT Step Test', icon: '❤️',
+      type: 'rep', targetReps: 90, repHoldTime: 0,
+      cues: ['Step up then down repeatedly', 'Use imaginary 20cm step', 'Target 30 steps/min', 'Continue for 3 minutes'],
+      check: checkStepUp, scoringMatrix: { repScore: 1, holdBonus: 0, maxTime: 180 }
+    }
+  ]
+};
+
+// ════════════════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════════════════
+let currentMode = null;
+let currentExerciseId = null;
+let currentExercise = null;
+let pose = null;
+let camera = null;
+let sessionActive = false;
+let paused = false;
+let startTime = null;
+let elapsedTime = 0;
+let timerInterval = null;
+let repCount = 0;
+let correctFrames = 0;
+let totalPoseFrames = 0;
+let holdStartTime = null;
+let holdAccumulated = 0;
+let repPhase = 'up'; // for squat/lunge: 'up' or 'down'
+let lastLandmarks = null;
+let scoreData = { form: 0, endurance: 0, consistency: 0, total: 0 };
+let sessionExercises = [];
+let currentExIdx = 0;
+
+// ════════════════════════════════════════════════════════════
+//  LANDING PAGE LOGIC
+// ════════════════════════════════════════════════════════════
+function selectMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('mode-' + mode).classList.add('active');
+
+  const wrap = document.getElementById('exercise-select-wrap');
+  const sel = document.getElementById('exercise-select');
+  const label = document.getElementById('exercise-select-label');
+
+  if (mode === 'tmt') {
+    wrap.classList.remove('visible');
+    document.getElementById('start-btn').disabled = false;
+  } else {
+    wrap.classList.add('visible');
+    const opts = EXERCISES[mode] || [];
+    label.textContent = mode === 'yoga' ? 'Choose Asana' : 'Choose Exercise';
+    sel.innerHTML = '<option value="">— Select —</option>' +
+      opts.map(e => `<option value="${e.id}">${e.icon} ${e.name}</option>`).join('') +
+      `<option value="all">🔄 Full ${mode.charAt(0).toUpperCase()+mode.slice(1)} Circuit</option>`;
+    sel.onchange = () => {
+      currentExerciseId = sel.value;
+      document.getElementById('start-btn').disabled = !sel.value;
+    };
+    document.getElementById('start-btn').disabled = true;
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  SESSION START
+// ════════════════════════════════════════════════════════════
+async function startSession() {
+  showLoading('Initialising camera & AI model…');
+
+  // Build exercise list
+  if (currentMode === 'tmt') {
+    sessionExercises = [...EXERCISES.tmt];
+  } else if (currentExerciseId === 'all') {
+    sessionExercises = [...EXERCISES[currentMode]];
+  } else {
+    sessionExercises = [EXERCISES[currentMode].find(e => e.id === currentExerciseId)];
+  }
+
+  currentExIdx = 0;
+  currentExercise = sessionExercises[0];
+
+  // Switch view
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('trainer').style.display = 'flex';
+  updateTrainerHeader();
+  updateGuide();
+
+  if (currentMode === 'tmt') {
+    document.getElementById('tmt-panel').style.display = 'block';
+    document.getElementById('guide-section').style.display = 'none';
+  }
+
+  resetMetrics();
+
+  try {
+    await initPose();
+    await initCamera();
+    hideLoading();
+    startTimer();
+    sessionActive = true;
+  } catch(e) {
+    hideLoading();
+    document.getElementById('cam-status-msg').textContent = 'Camera denied. Please allow access.';
+    document.getElementById('status-dot').classList.add('warning');
+    console.error(e);
+  }
+}
+
+function updateTrainerHeader() {
+  const icons = { yoga: '🙏', exercise: '💪', cardio: '🏃', tmt: '❤️' };
+  const titles = { yoga: 'Yoga & Asanas', exercise: 'Exercise Session', cardio: 'Cardio Training', tmt: 'TMT Endurance Test' };
+  document.getElementById('trainer-mode-icon').textContent = icons[currentMode];
+  document.getElementById('trainer-title-text').textContent = titles[currentMode];
+}
+
+function updateGuide() {
+  if (!currentExercise) return;
+  document.getElementById('guide-title').textContent = currentExercise.icon + ' ' + currentExercise.name;
+  const cues = currentExercise.cues;
+  document.getElementById('guide-cues').innerHTML = cues.map(c => `<li>${c}</li>`).join('');
+}
+
+// ════════════════════════════════════════════════════════════
+//  MEDIAPIPE POSE
+// ════════════════════════════════════════════════════════════
+async function initPose() {
+  pose = new Pose({
+    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
+  });
+  pose.setOptions({
+    modelComplexity: 1,
+    smoothLandmarks: true,
+    enableSegmentation: false,
+    smoothSegmentation: false,
+    minDetectionConfidence: 0.5,
+    minTrackingConfidence: 0.5
+  });
+  pose.onResults(onPoseResults);
+  await pose.initialize();
+}
+
+async function initCamera() {
+  const video = document.getElementById('videoElement');
+  const stream = await navigator.mediaDevices.getUserMedia({
+    video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
+    audio: false
+  });
+  video.srcObject = stream;
+  await new Promise(r => video.onloadedmetadata = r);
+  video.play();
+
+  // Size canvas
+  const canvas = document.getElementById('poseCanvas');
+  canvas.width = video.videoWidth || 1280;
+  canvas.height = video.videoHeight || 720;
+
+  camera = new Camera(video, {
+    onFrame: async () => {
+      if (!paused && sessionActive) {
+        await pose.send({ image: video });
+      }
+    },
+    width: 1280,
+    height: 720
+  });
+  await camera.start();
+
+  document.getElementById('cam-init-overlay').style.display = 'none';
+  document.getElementById('status-dot').classList.add('active');
+  document.getElementById('status-text').textContent = 'Tracking Active';
+}
+
+// ════════════════════════════════════════════════════════════
+//  POSE RESULTS & DRAWING
+// ════════════════════════════════════════════════════════════
+const MEDIAPIPE_CONNECTIONS = [
+  [11,12],[11,13],[13,15],[12,14],[14,16],
+  [11,23],[12,24],[23,24],
+  [23,25],[25,27],[24,26],[26,28],
+  [27,29],[29,31],[28,30],[30,32],
+  [0,1],[1,2],[2,3],[3,7],[0,4],[4,5],[5,6],[6,8],
+  [9,10],[15,17],[15,19],[15,21],[16,18],[16,20],[16,22],
+  [27,31],[28,32]
+];
+
+function onPoseResults(results) {
+  const canvas = document.getElementById('poseCanvas');
+  const ctx = canvas.getContext('2d');
+  const video = document.getElementById('videoElement');
+
+  // Match canvas to video display size
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width;
+  canvas.height = rect.height;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  if (!results.poseLandmarks) {
+    setFeedback('neutral', '⏳', 'Stand in camera view');
+    return;
+  }
+
+  lastLandmarks = results.poseLandmarks;
+  totalPoseFrames++;
+
+  // Run exercise check
+  const { correct, message, errors } = currentExercise.check(results.poseLandmarks);
+
+  if (correct) {
+    correctFrames++;
+    handleCorrectFrame();
+    setFeedback('correct', '✅', message || 'Great form!');
+  } else {
+    handleIncorrectFrame();
+    setFeedback('incorrect', '⚠️', message || 'Adjust posture');
+  }
+
+  // Draw skeleton
+  drawSkeleton(ctx, results.poseLandmarks, correct, errors);
+  updateScores();
+}
+
+function drawSkeleton(ctx, landmarks, correct, errors = []) {
+  const w = ctx.canvas.width;
+  const h = ctx.canvas.height;
+
+  const getPos = (idx) => ({
+    x: landmarks[idx].x * w,
+    y: landmarks[idx].y * h,
+    v: landmarks[idx].visibility
+  });
+
+  // Draw connections
+  MEDIAPIPE_CONNECTIONS.forEach(([a, b]) => {
+    const pA = getPos(a), pB = getPos(b);
+    if (pA.v < 0.3 || pB.v < 0.3) return;
+
+    const isError = errors.includes(a) || errors.includes(b);
+    const color = isError ? '#FF3B6B' : (correct ? '#00FF88' : '#FFD23F');
+
+    ctx.beginPath();
+    ctx.moveTo(pA.x, pA.y);
+    ctx.lineTo(pB.x, pB.y);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 3;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 8;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  });
+
+  // Draw joints
+  for (let i = 0; i < landmarks.length; i++) {
+    const p = getPos(i);
+    if (p.v < 0.3) continue;
+    const isError = errors.includes(i);
+    const color = isError ? '#FF3B6B' : (correct ? '#00FF88' : '#FFD23F');
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, i >= 11 ? 5 : 4, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 10;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  // Vertical centre line
+  ctx.setLineDash([8, 6]);
+  ctx.beginPath();
+  ctx.moveTo(w / 2, 0);
+  ctx.lineTo(w / 2, h);
+  ctx.strokeStyle = 'rgba(123,97,255,0.25)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+// ════════════════════════════════════════════════════════════
+//  EXERCISE CHECKS — Angle Utilities
+// ════════════════════════════════════════════════════════════
+function angle3(A, B, C) {
+  const rad = Math.atan2(C.y - B.y, C.x - B.x) - Math.atan2(A.y - B.y, A.x - B.x);
+  let deg = Math.abs(rad * 180 / Math.PI);
+  if (deg > 180) deg = 360 - deg;
+  return deg;
+}
+
+function lm(landmarks, idx) {
+  return landmarks[idx];
+}
+
+// ── YOGA CHECKS ──
+function checkTadasana(lm_arr) {
+  const lShoulder = lm(lm_arr, 11), rShoulder = lm(lm_arr, 12);
+  const lHip = lm(lm_arr, 23), rHip = lm(lm_arr, 24);
+  const lAnkle = lm(lm_arr, 27), rAnkle = lm(lm_arr, 28);
+  const nose = lm(lm_arr, 0);
+
+  if (!lShoulder || !rShoulder || !lHip || !rHip || !lAnkle || !rAnkle) {
+    return { correct: false, message: 'Full body not visible', errors: [] };
+  }
+
+  const errors = [];
+  let msgs = [];
+
+  // Shoulder level check
+  const shoulderDiff = Math.abs(lShoulder.y - rShoulder.y);
+  if (shoulderDiff > 0.05) { errors.push(11, 12); msgs.push('Level shoulders'); }
+
+  // Hip level
+  const hipDiff = Math.abs(lHip.y - rHip.y);
+  if (hipDiff > 0.05) { errors.push(23, 24); msgs.push('Level hips'); }
+
+  // Spine vertical (shoulder midpoint vs hip midpoint)
+  const shoulderMidX = (lShoulder.x + rShoulder.x) / 2;
+  const hipMidX = (lHip.x + rHip.x) / 2;
+  if (Math.abs(shoulderMidX - hipMidX) > 0.08) { errors.push(11,12,23,24); msgs.push('Stand straight'); }
+
+  const correct = errors.length === 0;
+  return { correct, message: correct ? 'Perfect Mountain Pose!' : msgs.join(' · '), errors };
+}
+
+function checkWarrior1(lm_arr) {
+  const lKnee = lm(lm_arr, 25), lHip = lm(lm_arr, 23), lAnkle = lm(lm_arr, 27);
+  const rKnee = lm(lm_arr, 26), rHip = lm(lm_arr, 24), rAnkle = lm(lm_arr, 28);
+  const lShoulder = lm(lm_arr, 11), rShoulder = lm(lm_arr, 12);
+  const lWrist = lm(lm_arr, 15), rWrist = lm(lm_arr, 16);
+
+  if (!lKnee || !rKnee) return { correct: false, message: 'Body not fully visible', errors: [] };
+
+  const errors = [];
+  let msgs = [];
+
+  // Check front knee angle ~90°
+  const frontKneeAngle = angle3(lHip, lKnee, lAnkle);
+  if (frontKneeAngle < 70 || frontKneeAngle > 110) { errors.push(25, 27); msgs.push('Bend front knee 90°'); }
+
+  // Arms overhead (wrists above shoulders)
+  if (lWrist && rWrist) {
+    if (lWrist.y > lShoulder.y || rWrist.y > rShoulder.y) { errors.push(15, 16); msgs.push('Raise arms overhead'); }
+  }
+
+  const correct = errors.length === 0;
+  return { correct, message: correct ? 'Warrior I — Strong!' : msgs.join(' · '), errors };
+}
+
+function checkTree(lm_arr) {
+  const lKnee = lm(lm_arr, 25), lHip = lm(lm_arr, 23), lAnkle = lm(lm_arr, 27);
+  const rKnee = lm(lm_arr, 26), rHip = lm(lm_arr, 24);
+  const lShoulder = lm(lm_arr, 11), rShoulder = lm(lm_arr, 12);
+
+  if (!lHip || !rHip) return { correct: false, message: 'Body not visible', errors: [] };
+
+  const errors = [];
+  let msgs = [];
+
+  // One foot off ground: detect bent knee (hip-knee-ankle angle small)
+  const rightKneeAngle = angle3(rHip, rKnee, lm(lm_arr, 28));
+  if (rightKneeAngle > 150) { msgs.push('Lift one foot to thigh'); errors.push(26, 28); }
+
+  // Balance: shoulder horizontal
+  const shoulderDiff = Math.abs(lShoulder.y - rShoulder.y);
+  if (shoulderDiff > 0.07) { errors.push(11, 12); msgs.push('Keep shoulders level'); }
+
+  const correct = errors.length === 0;
+  return { correct, message: correct ? 'Tree Pose — Balanced!' : msgs.join(' · '), errors };
+}
+
+function checkDownDog(lm_arr) {
+  const lShoulder = lm(lm_arr, 11), lHip = lm(lm_arr, 23), lKnee = lm(lm_arr, 25);
+  if (!lShoulder || !lHip || !lKnee) return { correct: false, message: 'Body not visible', errors: [] };
+
+  const hipAngle = angle3(lShoulder, lHip, lKnee);
+  const errors = [];
+  let msgs = [];
+
+  if (hipAngle < 80 || hipAngle > 130) { errors.push(23); msgs.push('Hips higher — inverted V shape'); }
+
+  // Hip should be above shoulders (y inverted in image coords)
+  if (lHip.y > lShoulder.y + 0.05) { errors.push(23, 24); msgs.push('Raise hips higher'); }
+
+  const correct = errors.length === 0;
+  return { correct, message: correct ? 'Down Dog — Excellent!' : msgs.join(' · '), errors };
+}
+
+// ── EXERCISE CHECKS ──
+function checkSquat(lm_arr) {
+  const lHip = lm(lm_arr, 23), lKnee = lm(lm_arr, 25), lAnkle = lm(lm_arr, 27);
+  const rHip = lm(lm_arr, 24), rKnee = lm(lm_arr, 26), rAnkle = lm(lm_arr, 28);
+
+  if (!lHip || !lKnee || !lAnkle) return { correct: false, message: 'Step into frame', errors: [] };
+
+  const lAngle = angle3(lHip, lKnee, lAnkle);
+  const rAngle = angle3(rHip, rKnee, rAnkle);
+  const avgKnee = (lAngle + rAngle) / 2;
+
+  const errors = [];
+  let msgs = [];
+
+  if (avgKnee < 160 && avgKnee > 80) {
+    // In squat position
+    if (avgKnee > 110) { msgs.push('Squat deeper — thighs parallel'); errors.push(25,26); }
+    // Check back straight
+    const lShoulder = lm(lm_arr, 11);
+    if (lShoulder && Math.abs(lShoulder.x - lHip.x) > 0.2) { errors.push(11); msgs.push('Chest up, back straight'); }
+  }
+
+  // Rep detection
+  if (avgKnee < 105 && repPhase === 'up') { repPhase = 'down'; }
+  if (avgKnee > 155 && repPhase === 'down') { repPhase = 'up'; countRep(); }
+
+  const correct = errors.length === 0 && avgKnee < 160;
+  return { correct: correct && repPhase === 'down', message: correct ? (repPhase === 'down' ? 'Good Squat!' : 'Stand up!') : (msgs[0] || 'Lower into squat'), errors };
+}
+
+function checkLunge(lm_arr) {
+  const lHip = lm(lm_arr, 23), lKnee = lm(lm_arr, 25), lAnkle = lm(lm_arr, 27);
+  if (!lHip || !lKnee || !lAnkle) return { correct: false, message: 'Step into frame', errors: [] };
+
+  const kneeAngle = angle3(lHip, lKnee, lAnkle);
+  const errors = [];
+  let msgs = [];
+
+  if (kneeAngle < 105 && repPhase === 'up') { repPhase = 'down'; }
+  if (kneeAngle > 155 && repPhase === 'down') { repPhase = 'up'; countRep(); }
+
+  if (kneeAngle > 110 && kneeAngle < 160) msgs.push('Lower deeper into lunge');
+  if (kneeAngle < 70) { errors.push(25); msgs.push('Don\'t over-flex knee'); }
+
+  const correct = kneeAngle >= 70 && kneeAngle <= 110 && repPhase === 'down';
+  return { correct, message: correct ? 'Lunge — Excellent!' : (msgs[0] || 'Step into lunge position'), errors };
+}
+
+function checkPlank(lm_arr) {
+  const lShoulder = lm(lm_arr, 11), lHip = lm(lm_arr, 23), lAnkle = lm(lm_arr, 27);
+  if (!lShoulder || !lHip || !lAnkle) return { correct: false, message: 'Full body not visible', errors: [] };
+
+  // Body should form straight line — check hip sag/pike
+  const bodyAngle = angle3(lShoulder, lHip, lAnkle);
+  const errors = [];
+  let msgs = [];
+
+  if (bodyAngle < 150) {
+    if (lHip.y > lShoulder.y + 0.1 && lHip.y > lAnkle.y - 0.05) { errors.push(23, 24); msgs.push('Raise hips — straight line'); }
+    else { errors.push(23); msgs.push('Lower hips — too high'); }
+  }
+
+  const correct = bodyAngle >= 155;
+  return { correct, message: correct ? 'Plank — Hold it!' : (msgs[0] || 'Align body straight'), errors };
+}
+
+function checkJumpingJack(lm_arr) {
+  const lWrist = lm(lm_arr, 15), rWrist = lm(lm_arr, 16);
+  const lAnkle = lm(lm_arr, 27), rAnkle = lm(lm_arr, 28);
+  const lShoulder = lm(lm_arr, 11);
+
+  if (!lWrist || !rWrist || !lAnkle || !rAnkle) return { correct: false, message: 'Full body visible', errors: [] };
+
+  const armsUp = lWrist.y < lShoulder.y && rWrist.y < lShoulder.y;
+  const feetWide = Math.abs(lAnkle.x - rAnkle.x) > 0.25;
+
+  if (armsUp && feetWide && repPhase === 'up') { repPhase = 'down'; }
+  if (!armsUp && !feetWide && repPhase === 'down') { repPhase = 'up'; countRep(); }
+
+  const correct = (armsUp && feetWide) || (!armsUp && !feetWide);
+  return { correct, message: correct ? 'Jumping Jack — Go!' : 'Sync arms and legs', errors: [] };
+}
+
+// ── CARDIO & TMT ──
+function checkHighKnee(lm_arr) {
+  const lHip = lm(lm_arr, 23), lKnee = lm(lm_arr, 25);
+  const rHip = lm(lm_arr, 24), rKnee = lm(lm_arr, 26);
+
+  if (!lHip || !lKnee) return { correct: false, message: 'Step into frame', errors: [] };
+
+  const lKneeLift = lHip.y - lKnee.y;
+  const rKneeLift = rHip.y - rKnee.y;
+  const maxLift = Math.max(lKneeLift, rKneeLift);
+
+  if (maxLift > 0.08 && repPhase === 'up') { repPhase = 'down'; countRep(); }
+  if (maxLift < 0.02 && repPhase === 'down') { repPhase = 'up'; }
+
+  const correct = maxLift > 0.05;
+  return { correct, message: correct ? 'High Knees — Keep going!' : 'Drive knees higher!', errors: correct ? [] : [25, 26] };
+}
+
+function checkMarch(lm_arr) {
+  return checkHighKnee(lm_arr);
+}
+
+function checkStepUp(lm_arr) {
+  const lHip = lm(lm_arr, 23), lKnee = lm(lm_arr, 25), lAnkle = lm(lm_arr, 27);
+  if (!lHip || !lKnee || !lAnkle) return { correct: false, message: 'Step into frame', errors: [] };
+
+  const kneeAngle = angle3(lHip, lKnee, lAnkle);
+
+  if (kneeAngle < 130 && repPhase === 'up') { repPhase = 'down'; }
+  if (kneeAngle > 160 && repPhase === 'down') { repPhase = 'up'; countRep(); }
+
+  const correct = true; // TMT just needs movement
+  return { correct, message: 'Step — keep steady pace!', errors: [] };
+}
+
+// ════════════════════════════════════════════════════════════
+//  REP / HOLD LOGIC
+// ════════════════════════════════════════════════════════════
+function countRep() {
+  repCount++;
+  document.getElementById('rep-count').textContent = repCount;
+
+  // Flash rep counter
+  const el = document.getElementById('rep-count');
+  el.style.color = 'var(--green)';
+  el.style.transform = 'scale(1.3)';
+  setTimeout(() => {
+    el.style.color = 'var(--accent)';
+    el.style.transform = 'scale(1)';
+  }, 200);
+
+  checkExerciseComplete();
+}
+
+function handleCorrectFrame() {
+  if (!holdStartTime) holdStartTime = Date.now();
+  holdAccumulated = (Date.now() - holdStartTime) / 1000;
+  document.getElementById('hold-time').textContent = Math.floor(holdAccumulated) + 's';
+
+  if (currentExercise.type === 'hold' && holdAccumulated >= currentExercise.targetHold) {
+    countRep();
+    holdStartTime = null;
+    holdAccumulated = 0;
+  }
+}
+
+function handleIncorrectFrame() {
+  holdStartTime = null;
+  holdAccumulated = 0;
+}
+
+function checkExerciseComplete() {
+  if (repCount >= currentExercise.targetReps) {
+    nextExercise();
+  }
+}
+
+function nextExercise() {
+  currentExIdx++;
+  if (currentExIdx >= sessionExercises.length) {
+    finishSession();
+    return;
+  }
+  currentExercise = sessionExercises[currentExIdx];
+  repCount = 0;
+  repPhase = 'up';
+  holdStartTime = null;
+  holdAccumulated = 0;
+  document.getElementById('rep-count').textContent = '0';
+  document.getElementById('hold-time').textContent = '0s';
+  updateGuide();
+  setFeedback('neutral', '⏳', 'Get into position for ' + currentExercise.name);
+}
+
+// ════════════════════════════════════════════════════════════
+//  SCORING ENGINE
+// ════════════════════════════════════════════════════════════
+function updateScores() {
+  const matrix = currentExercise.scoringMatrix;
+  const accuracy = totalPoseFrames > 0 ? correctFrames / totalPoseFrames : 0;
+  const elapsedSec = elapsedTime;
+
+  // Form score (0–40): accuracy-based
+  const formScore = Math.min(40, Math.round(accuracy * 40));
+
+  // Endurance score (0–40): reps + time
+  const repContrib = Math.min(20, repCount * matrix.repScore);
+  const timeContrib = Math.min(20, (elapsedSec / (matrix.maxTime || 180)) * 20);
+  const enduranceScore = Math.round(repContrib + timeContrib);
+
+  // Consistency score (0–20): how long they maintained correct form
+  const consistencyScore = Math.min(20, Math.round(accuracy * accuracy * 20));
+
+  const total = Math.min(100, formScore + enduranceScore + consistencyScore);
+
+  scoreData = { form: formScore, endurance: enduranceScore, consistency: consistencyScore, total };
+
+  // Update UI
+  document.getElementById('score-form').textContent = formScore;
+  document.getElementById('score-endurance').textContent = enduranceScore;
+  document.getElementById('score-consistency').textContent = consistencyScore;
+  document.getElementById('score-num').textContent = total;
+  document.getElementById('bar-form').style.width = formScore / 40 * 100 + '%';
+  document.getElementById('bar-endurance').style.width = enduranceScore / 40 * 100 + '%';
+  document.getElementById('bar-consistency').style.width = consistencyScore / 20 * 100 + '%';
+
+  // Ring
+  const circumference = 238.76;
+  const offset = circumference - (total / 100) * circumference;
+  document.getElementById('score-ring').style.strokeDashoffset = offset;
+
+  // Accuracy display
+  const pct = totalPoseFrames > 0 ? Math.round(accuracy * 100) : 0;
+  document.getElementById('accuracy-pct').textContent = pct + '%';
+  document.getElementById('correct-count').textContent = repCount;
+
+  // TMT live
+  if (currentMode === 'tmt') {
+    const mets = calcMETs(repCount, elapsedSec);
+    document.getElementById('tmt-mets-live').textContent = mets.toFixed(1);
+    document.getElementById('tmt-cat-live').textContent = getTMTCategory(mets);
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  TMT SURROGATE — METs Calculation
+//  Based on modified Balke Step Test protocol
+//  METs = (reps × step_height_m × 1.8 × body_weight_factor) / time + resting
+//  Simplified surrogate: METs derived from step rate over duration
+// ════════════════════════════════════════════════════════════
+function calcMETs(steps, durationSec) {
+  if (durationSec < 1) return 0;
+  const stepsPerMin = (steps / durationSec) * 60;
+  // Approximate: METs = 0.35 × steps/min (based on ACSM step test formulas)
+  const mets = Math.max(1, 0.35 * stepsPerMin + 1);
+  return Math.min(mets, 16);
+}
+
+function getTMTCategory(mets) {
+  if (mets < 4) return 'Poor';
+  if (mets < 6) return 'Below Average';
+  if (mets < 8) return 'Average';
+  if (mets < 10) return 'Good';
+  if (mets < 12) return 'Excellent';
+  return 'Superior';
+}
+
+function getTMTInterpretation(mets) {
+  if (mets < 5) return 'High cardiovascular risk — consult physician';
+  if (mets < 7) return 'Moderate risk — lifestyle modification advised';
+  if (mets < 9) return 'Acceptable functional capacity';
+  if (mets < 11) return 'Good cardiac reserve';
+  return 'Excellent cardiovascular fitness';
+}
+
+// Score → grade
+function getGrade(score) {
+  if (score >= 90) return { grade: 'S', color: '#00FF88' };
+  if (score >= 80) return { grade: 'A', color: '#00E5FF' };
+  if (score >= 65) return { grade: 'B', color: '#7B61FF' };
+  if (score >= 50) return { grade: 'C', color: '#FFD23F' };
+  if (score >= 35) return { grade: 'D', color: '#FF8C42' };
+  return { grade: 'F', color: '#FF3B6B' };
+}
+
+// ════════════════════════════════════════════════════════════
+//  TIMER
+// ════════════════════════════════════════════════════════════
+function startTimer() {
+  startTime = Date.now();
+  timerInterval = setInterval(() => {
+    if (!paused) {
+      elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+      const m = Math.floor(elapsedTime / 60).toString().padStart(2, '0');
+      const s = (elapsedTime % 60).toString().padStart(2, '0');
+      document.getElementById('timer-display').textContent = m + ':' + s;
+    }
+  }, 500);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+}
+
+// ════════════════════════════════════════════════════════════
+//  SESSION CONTROLS
+// ════════════════════════════════════════════════════════════
+function togglePause() {
+  paused = !paused;
+  document.getElementById('pause-btn').textContent = paused ? '▶ Resume' : '⏸ Pause';
+  if (paused) {
+    setFeedback('neutral', '⏸', 'Session paused');
+    document.getElementById('status-dot').classList.remove('active');
+    document.getElementById('status-dot').classList.add('warning');
+    document.getElementById('status-text').textContent = 'Paused';
+  } else {
+    startTime = Date.now() - elapsedTime * 1000;
+    document.getElementById('status-dot').classList.add('active');
+    document.getElementById('status-dot').classList.remove('warning');
+    document.getElementById('status-text').textContent = 'Tracking Active';
+  }
+}
+
+function finishSession() {
+  sessionActive = false;
+  stopTimer();
+  showResults();
+}
+
+function endSession() {
+  sessionActive = false;
+  stopTimer();
+  if (camera) camera.stop();
+  showResults();
+}
+
+function showResults() {
+  const modeNames = { yoga: 'Yoga Session', exercise: 'Exercise Session', cardio: 'Cardio Training', tmt: 'TMT Endurance Test' };
+  const accuracy = totalPoseFrames > 0 ? Math.round((correctFrames / totalPoseFrames) * 100) : 0;
+  const mets = calcMETs(repCount, elapsedTime);
+  const { grade, color } = getGrade(scoreData.total);
+  const m = Math.floor(elapsedTime / 60), s = elapsedTime % 60;
+
+  document.getElementById('result-session-name').textContent = modeNames[currentMode] || '';
+  document.getElementById('result-big-score').textContent = scoreData.total;
+  document.getElementById('result-big-score').style.color = color;
+  document.getElementById('result-grade').textContent = grade;
+  document.getElementById('result-grade').style.background = color + '22';
+  document.getElementById('result-grade').style.color = color;
+  document.getElementById('result-grade').style.border = '1px solid ' + color;
+  document.getElementById('result-reps').textContent = repCount;
+  document.getElementById('result-time').textContent = m + ':' + s.toString().padStart(2,'0');
+  document.getElementById('result-accuracy').textContent = accuracy + '%';
+
+  // TMT section
+  const tmtSection = document.getElementById('result-tmt-section');
+  if (currentMode === 'tmt' || elapsedTime >= 60) {
+    tmtSection.style.display = 'block';
+    document.getElementById('result-mets').textContent = mets.toFixed(1) + ' METs';
+    document.getElementById('result-fc').textContent = getTMTCategory(mets);
+    document.getElementById('result-cv-cat').textContent = mets >= 8 ? 'Normal' : mets >= 5 ? 'Borderline' : 'Reduced';
+    document.getElementById('result-cv-interp').textContent = getTMTInterpretation(mets);
+  } else {
+    tmtSection.style.display = 'none';
+  }
+
+  document.getElementById('results-overlay').classList.add('show');
+}
+
+function retrySession() {
+  document.getElementById('results-overlay').classList.remove('show');
+  resetAll();
+  startSession();
+}
+
+function goHome() {
+  document.getElementById('results-overlay').classList.remove('show');
+  if (camera) { try { camera.stop(); } catch(e){} }
+  resetAll();
+  document.getElementById('trainer').style.display = 'none';
+  document.getElementById('landing').style.display = 'flex';
+}
+
+function resetAll() {
+  repCount = 0;
+  correctFrames = 0;
+  totalPoseFrames = 0;
+  holdStartTime = null;
+  holdAccumulated = 0;
+  repPhase = 'up';
+  elapsedTime = 0;
+  currentExIdx = 0;
+  scoreData = { form: 0, endurance: 0, consistency: 0, total: 0 };
+  paused = false;
+}
+
+function resetMetrics() {
+  resetAll();
+  document.getElementById('rep-count').textContent = '0';
+  document.getElementById('hold-time').textContent = '0s';
+  document.getElementById('correct-count').textContent = '0';
+  document.getElementById('accuracy-pct').textContent = '—';
+  document.getElementById('score-num').textContent = '0';
+  document.getElementById('score-form').textContent = '0';
+  document.getElementById('score-endurance').textContent = '0';
+  document.getElementById('score-consistency').textContent = '0';
+  document.getElementById('score-ring').style.strokeDashoffset = '238.76';
+  document.getElementById('timer-display').textContent = '00:00';
+  document.getElementById('pause-btn').textContent = '⏸ Pause';
+  document.getElementById('status-dot').className = 'status-dot';
+  document.getElementById('status-text').textContent = 'Initialising';
+  document.getElementById('cam-init-overlay').style.display = 'flex';
+  document.getElementById('cam-status-msg').textContent = 'Requesting camera…';
+  document.getElementById('tmt-panel').style.display = 'none';
+  document.getElementById('guide-section').style.display = 'block';
+}
+
+// ════════════════════════════════════════════════════════════
+//  FEEDBACK UI
+// ════════════════════════════════════════════════════════════
+function setFeedback(type, icon, text) {
+  const pill = document.getElementById('feedback-pill');
+  pill.className = 'feedback-pill ' + type;
+  document.getElementById('feedback-icon').textContent = icon;
+  document.getElementById('feedback-text').textContent = text;
+}
+
+// ════════════════════════════════════════════════════════════
+//  LOADING
+// ════════════════════════════════════════════════════════════
+function showLoading(msg) {
+  document.getElementById('loading-msg').textContent = msg;
+  document.getElementById('loading-screen').classList.add('show');
+}
+
+function hideLoading() {
+  document.getElementById('loading-screen').classList.remove('show');
+}
+
+// ════════════════════════════════════════════════════════════
+//  CANVAS RESIZE
+// ════════════════════════════════════════════════════════════
+window.addEventListener('resize', () => {
+  const canvas = document.getElementById('poseCanvas');
+  const parent = canvas.parentElement;
+  if (parent) {
+    canvas.width = parent.clientWidth;
+    canvas.height = parent.clientHeight;
+  }
+});
+</script>
+
+</body>
+</html>
