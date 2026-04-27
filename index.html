@@ -10,371 +10,370 @@
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════ DESIGN TOKENS ═══════════════ */
 :root{
   --bg:#070A0F;--surface:#0E1420;--surface2:#161D2E;--border:#1E2A40;
   --accent:#00E5FF;--accent2:#7B61FF;--green:#00FF88;--red:#FF3B6B;
   --yellow:#FFD23F;--orange:#FF8C42;--text:#E8EDF5;--muted:#5A6A85;
-  --glow:0 0 28px rgba(0,229,255,.28);
-  --glow-g:0 0 20px rgba(0,255,136,.35);
-  --glow-r:0 0 20px rgba(255,59,107,.35);
+  --glow:0 0 24px rgba(0,229,255,.28);--glow-g:0 0 18px rgba(0,255,136,.35);--glow-r:0 0 18px rgba(255,59,107,.35);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden}
 body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);touch-action:manipulation}
 
-/* ═══════════════ LANDING ═══════════════ */
-#landing{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 16px;overflow-y:auto;position:relative}
+/* ── LANDING ── */
+#landing{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;overflow-y:auto;position:relative}
 #landing::before{content:'';position:absolute;inset:0;pointer-events:none;
   background:radial-gradient(ellipse 60% 50% at 20% 20%,rgba(123,97,255,.13) 0%,transparent 60%),
-             radial-gradient(ellipse 50% 60% at 80% 80%,rgba(0,229,255,.11) 0%,transparent 60%),
-             repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(30,42,64,.28) 39px,rgba(30,42,64,.28) 40px),
-             repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(30,42,64,.28) 39px,rgba(30,42,64,.28) 40px)}
-.logo-wrap{display:flex;align-items:center;gap:12px;margin-bottom:8px;position:relative;z-index:1}
-.logo-icon{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,var(--accent2),var(--accent));display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:var(--glow)}
-.logo-text{font-size:2rem;font-weight:900;letter-spacing:-1px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.tagline{font-size:.72rem;color:var(--muted);margin-bottom:24px;letter-spacing:.1em;font-weight:500;text-transform:uppercase;text-align:center;position:relative;z-index:1}
-.selection-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px 20px;width:100%;max-width:460px;position:relative;z-index:1;box-shadow:0 24px 80px rgba(0,0,0,.5)}
-.selection-card h2{font-size:.9rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px}
-.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px}
-.mode-btn{background:var(--surface2);border:2px solid var(--border);border-radius:13px;padding:14px 10px;cursor:pointer;transition:all .2s;text-align:center}
+  radial-gradient(ellipse 50% 60% at 80% 80%,rgba(0,229,255,.11) 0%,transparent 60%),
+  repeating-linear-gradient(0deg,transparent 39px,rgba(30,42,64,.25) 39px,rgba(30,42,64,.25) 40px),
+  repeating-linear-gradient(90deg,transparent 39px,rgba(30,42,64,.25) 39px,rgba(30,42,64,.25) 40px)}
+.logo-wrap{display:flex;align-items:center;gap:11px;margin-bottom:6px;position:relative;z-index:1}
+.logo-icon{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,var(--accent2),var(--accent));display:flex;align-items:center;justify-content:center;font-size:21px;box-shadow:var(--glow)}
+.logo-text{font-size:1.9rem;font-weight:900;letter-spacing:-1px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.tagline{font-size:.7rem;color:var(--muted);margin-bottom:18px;letter-spacing:.1em;font-weight:500;text-transform:uppercase;text-align:center;position:relative;z-index:1}
+.selection-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px 18px;width:100%;max-width:500px;position:relative;z-index:1;box-shadow:0 20px 70px rgba(0,0,0,.5)}
+.selection-card h2{font-size:.82rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:13px}
+.mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+.mode-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.mode-btn{background:var(--surface2);border:2px solid var(--border);border-radius:12px;padding:11px 7px;cursor:pointer;transition:all .2s;text-align:center}
 .mode-btn:hover,.mode-btn:active{border-color:var(--accent);background:rgba(0,229,255,.05)}
-.mode-btn.active{border-color:var(--accent);box-shadow:var(--glow);background:rgba(0,229,255,.06)}
-.mode-btn .mi{font-size:1.7rem;margin-bottom:5px;display:block}
-.mode-btn .ml{font-size:.82rem;font-weight:700;color:var(--text)}
-.mode-btn .ms{font-size:.67rem;color:var(--muted);margin-top:1px}
-.ex-wrap{margin-bottom:18px;display:none}
+.mode-btn.active{border-color:var(--accent);box-shadow:var(--glow);background:rgba(0,229,255,.07)}
+.mode-btn .mi{font-size:1.5rem;margin-bottom:4px;display:block}
+.mode-btn .ml{font-size:.75rem;font-weight:700;color:var(--text)}
+.mode-btn .ms{font-size:.62rem;color:var(--muted);margin-top:1px}
+.ex-wrap{margin-bottom:14px;display:none}
 .ex-wrap.visible{display:block}
-.ex-wrap label{display:block;font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
-select{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:11px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.88rem;padding:11px 42px 11px 13px;outline:none;cursor:pointer;transition:border-color .2s;appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235A6A85' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 13px center}
+.ex-wrap label{display:block;font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+select{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.86rem;padding:10px 40px 10px 12px;outline:none;cursor:pointer;transition:border-color .2s;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%235A6A85' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center}
 select:focus{border-color:var(--accent)}
 select option{background:#0E1420}
-.start-btn{width:100%;padding:14px;border-radius:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#07090D;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;letter-spacing:.04em;cursor:pointer;transition:all .2s;box-shadow:0 8px 32px rgba(0,229,255,.3)}
-.start-btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,229,255,.4)}
+/* Gemini panel */
+.gemini-wrap{background:rgba(123,97,255,.07);border:1px solid rgba(123,97,255,.25);border-radius:12px;padding:12px 14px;margin-bottom:14px;display:none}
+.gemini-wrap.visible{display:block}
+.gemini-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.gemini-header span{font-size:.75rem;font-weight:700;color:var(--accent2);display:flex;align-items:center;gap:6px}
+.gemini-status{font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid}
+.gemini-status.connected{color:var(--green);border-color:var(--green);background:rgba(0,255,136,.1)}
+.gemini-status.disconnected{color:var(--muted);border-color:var(--border)}
+.gemini-row{display:flex;gap:7px;align-items:center}
+.gemini-input{flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:9px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.8rem;padding:8px 11px;outline:none;transition:border-color .2s}
+.gemini-input:focus{border-color:var(--accent2)}
+.gemini-input::placeholder{color:var(--muted)}
+.gemini-connect-btn{background:linear-gradient(135deg,var(--accent2),var(--accent));border:none;color:#07090D;font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:800;padding:8px 14px;border-radius:9px;cursor:pointer;white-space:nowrap;transition:opacity .2s}
+.gemini-connect-btn:hover{opacity:.85}
+.gemini-model-row{display:flex;gap:7px;margin-top:7px;align-items:center}
+.gemini-model-row label{font-size:.68rem;color:var(--muted);white-space:nowrap}
+.start-btn{width:100%;padding:13px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#07090D;font-family:'Outfit',sans-serif;font-size:.92rem;font-weight:800;letter-spacing:.04em;cursor:pointer;transition:all .2s;box-shadow:0 8px 28px rgba(0,229,255,.3)}
+.start-btn:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(0,229,255,.4)}
 .start-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
-.disclaimer{text-align:center;font-size:.62rem;color:var(--muted);margin-top:12px;line-height:1.6}
+.disclaimer{text-align:center;font-size:.6rem;color:var(--muted);margin-top:10px;line-height:1.5}
+/* Toggle show/hide gemini */
+.gemini-toggle{display:flex;align-items:center;gap:6px;font-size:.68rem;color:var(--accent2);cursor:pointer;margin-bottom:8px;font-weight:600;background:none;border:none;padding:0}
+.gemini-toggle:hover{opacity:.8}
 
-/* ═══════════════ TRAINER SHELL ═══════════════ */
+/* ── TRAINER ── */
 #trainer{display:none;flex-direction:column;height:100%;overflow:hidden}
-.t-header{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;min-height:44px;gap:8px}
-.t-title{font-size:.92rem;font-weight:700;display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.t-header{display:flex;align-items:center;padding:7px 12px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;min-height:42px;gap:8px}
+.t-title{font-size:.88rem;font-weight:700;display:flex;align-items:center;gap:7px;flex:1;min-width:0;overflow:hidden}
 .t-title span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.badge{background:linear-gradient(135deg,var(--accent2),var(--accent));color:#07090D;font-size:.58rem;font-weight:800;padding:2px 7px;border-radius:999px;letter-spacing:.06em;text-transform:uppercase;flex-shrink:0}
-.header-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
-/* Voice toggle button */
-.voice-btn{background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.3);color:var(--accent);font-size:.75rem;font-weight:700;padding:5px 10px;border-radius:8px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:4px;white-space:nowrap}
-.voice-btn.muted{background:rgba(255,59,107,.1);border-color:rgba(255,59,107,.3);color:var(--red)}
-.back-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);font-family:'Outfit',sans-serif;font-size:.78rem;padding:5px 11px;border-radius:8px;cursor:pointer;transition:all .2s;white-space:nowrap}
-.back-btn:hover{border-color:var(--red);color:var(--red)}
+.badge{background:linear-gradient(135deg,var(--accent2),var(--accent));color:#07090D;font-size:.56rem;font-weight:800;padding:2px 6px;border-radius:999px;letter-spacing:.06em;text-transform:uppercase;flex-shrink:0}
+.header-actions{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.hbtn{font-size:.7rem;font-weight:700;padding:4px 9px;border-radius:7px;cursor:pointer;transition:all .2s;border:1px solid;white-space:nowrap;font-family:'Outfit',sans-serif}
+.hbtn-voice{background:rgba(0,229,255,.1);border-color:rgba(0,229,255,.3);color:var(--accent)}
+.hbtn-voice.muted{background:rgba(255,59,107,.1);border-color:rgba(255,59,107,.3);color:var(--red)}
+.hbtn-ai{background:rgba(123,97,255,.12);border-color:rgba(123,97,255,.35);color:var(--accent2)}
+.hbtn-ai.on{background:rgba(123,97,255,.25);box-shadow:0 0 10px rgba(123,97,255,.4)}
+.hbtn-end{background:var(--surface2);border-color:var(--border);color:var(--muted)}
+.hbtn-end:hover{border-color:var(--red);color:var(--red)}
 .t-body{display:flex;flex:1;overflow:hidden;flex-direction:column}
 
-/* ═══════════════ CAMERA AREA ═══════════════ */
+/* ── CAMERA ── */
 .cam-wrap{position:relative;background:#000;flex:1;overflow:hidden;min-height:0}
-#videoElement{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);opacity:1}
+/* VIDEO VISIBLE — key fix: show the actual video feed */
+#videoElement{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
 #poseCanvas{position:absolute;inset:0;width:100%;height:100%;transform:scaleX(-1)}
-
-/* Camera init */
-.cam-init-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#000;z-index:20;gap:14px}
-.spinner{width:42px;height:42px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+/* Vignette overlay for premium feel */
+.cam-vignette{position:absolute;inset:0;pointer-events:none;z-index:5;
+  background:radial-gradient(ellipse 80% 80% at 50% 50%,transparent 55%,rgba(7,10,15,.55) 100%)}
+.cam-init-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#000;z-index:22;gap:14px}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.cam-init-overlay p{color:var(--muted);font-size:.82rem;text-align:center;padding:0 24px}
+.cam-init-overlay p{color:var(--muted);font-size:.8rem;text-align:center;padding:0 20px}
 
-/* ═══════════════ STATUS INDICATOR (top-centre) ═══════════════ */
-.status-bar{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:18;display:flex;align-items:center;gap:7px;background:rgba(7,10,15,.82);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:.75rem;font-weight:700;transition:all .3s;white-space:nowrap}
-.status-bar .sring{width:9px;height:9px;border-radius:50%;flex-shrink:0;transition:background .3s}
-.status-bar.s-none .sring{background:var(--red);box-shadow:0 0 8px var(--red)}
-.status-bar.s-cal  .sring{background:var(--yellow);box-shadow:0 0 8px var(--yellow);animation:pulse 1.4s infinite}
-.status-bar.s-ready .sring{background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1s infinite}
-.status-bar.s-active .sring{background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pulse .8s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+/* ── STATUS BAR (top-centre) ── */
+.status-bar{position:absolute;top:9px;left:50%;transform:translateX(-50%);z-index:18;display:flex;align-items:center;gap:7px;background:rgba(7,10,15,.84);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:20px;padding:5px 13px;font-size:.73rem;font-weight:700;white-space:nowrap;transition:border-color .3s}
+.sring{width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:background .3s}
+.s-none .sring{background:var(--red);box-shadow:0 0 7px var(--red)}
+.s-cal  .sring{background:var(--yellow);box-shadow:0 0 7px var(--yellow);animation:pls 1.4s infinite}
+.s-ready .sring{background:var(--green);box-shadow:0 0 7px var(--green);animation:pls 1s infinite}
+.s-active .sring{background:var(--accent);box-shadow:0 0 7px var(--accent);animation:pls .8s infinite}
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.4}}
 
-/* ═══════════════ CALIBRATION OVERLAY ═══════════════ */
-#calib-overlay{position:absolute;inset:0;z-index:25;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(7,10,15,.82);backdrop-filter:blur(8px);padding:20px;text-align:center;gap:12px;transition:opacity .4s}
+/* ── CALIB OVERLAY ── */
+#calib-overlay{position:absolute;inset:0;z-index:25;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(7,10,15,.86);backdrop-filter:blur(8px);padding:20px;text-align:center;gap:11px;transition:opacity .4s}
 #calib-overlay.hidden{opacity:0;pointer-events:none}
-.calib-icon{font-size:2.8rem;animation:breathe 2.2s ease-in-out infinite}
+.calib-icon{font-size:2.6rem;animation:breathe 2.2s ease-in-out infinite}
 @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
-.calib-title{font-size:1.15rem;font-weight:800;color:var(--text)}
-.calib-sub{font-size:.78rem;color:var(--muted);line-height:1.6;max-width:250px}
-.calib-checks{display:flex;flex-direction:column;gap:6px;width:100%;max-width:250px}
-.cr{display:flex;align-items:center;gap:9px;background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:8px 12px;font-size:.78rem;font-weight:600;transition:all .35s;color:var(--muted)}
+.calib-title{font-size:1.1rem;font-weight:800;color:var(--text)}
+.calib-sub{font-size:.76rem;color:var(--muted);line-height:1.6;max-width:260px}
+.calib-ex-hint{background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);border-radius:10px;padding:8px 14px;font-size:.74rem;color:var(--accent);line-height:1.5;max-width:260px}
+.calib-checks{display:flex;flex-direction:column;gap:5px;width:100%;max-width:255px}
+.cr{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:7px 11px;font-size:.76rem;font-weight:600;transition:all .3s;color:var(--muted)}
 .cr.ok{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.08)}
-.cdot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:background .35s}
+.cdot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:background .3s}
 .cr.ok .cdot{background:var(--green)}
-
-/* Countdown ring */
-.countdown-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:4px}
-.cd-ring{position:relative;width:72px;height:72px}
+.countdown-wrap{display:flex;flex-direction:column;align-items:center;gap:5px;margin-top:3px}
+.cd-ring{position:relative;width:68px;height:68px}
 .cd-ring svg{transform:rotate(-90deg)}
-.cd-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:2rem;font-weight:900;color:var(--green)}
-.cd-label{font-size:.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.cd-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:1.9rem;font-weight:900;color:var(--green)}
+.cd-label{font-size:.68rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
 
-/* ═══════════════ DIRECTION ARROW ═══════════════ */
-.dir-arrow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:16;pointer-events:none;font-size:3.5rem;opacity:0;transition:opacity .3s;filter:drop-shadow(0 0 12px rgba(255,210,63,.8))}
+/* ── TARGET POSE HINT (canvas overlay instruction) ── */
+/* Drawn on canvas directly — no extra HTML needed */
+
+/* ── DIRECTION ARROW ── */
+.dir-arrow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:16;pointer-events:none;font-size:3.2rem;opacity:0;transition:opacity .3s;filter:drop-shadow(0 0 10px rgba(255,210,63,.8))}
 .dir-arrow.show{opacity:1}
 
-/* ═══════════════ FEEDBACK PILL ═══════════════ */
-.fb-wrap{position:absolute;bottom:70px;left:50%;transform:translateX(-50%);z-index:12;text-align:center;width:calc(100% - 28px);max-width:360px;pointer-events:none}
-.fb-pill{display:inline-flex;align-items:center;gap:7px;padding:8px 20px;border-radius:999px;font-size:.85rem;font-weight:700;backdrop-filter:blur(14px);border:1.5px solid;transition:all .25s;max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+/* ── FEEDBACK PILL ── */
+.fb-wrap{position:absolute;bottom:68px;left:50%;transform:translateX(-50%);z-index:12;text-align:center;width:calc(100% - 24px);max-width:360px;pointer-events:none}
+.fb-pill{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:999px;font-size:.82rem;font-weight:700;backdrop-filter:blur(14px);border:1.5px solid;transition:all .25s;max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .fb-pill.correct{background:rgba(0,255,136,.13);border-color:var(--green);color:var(--green);box-shadow:var(--glow-g)}
 .fb-pill.incorrect{background:rgba(255,59,107,.13);border-color:var(--red);color:var(--red);box-shadow:var(--glow-r)}
 .fb-pill.neutral{background:rgba(255,210,63,.11);border-color:var(--yellow);color:var(--yellow)}
-/* Shake on incorrect */
-.fb-pill.shake{animation:shake .35s ease}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-/* Pulse on correct */
-.fb-pill.correct{animation:correctPulse 1.5s ease infinite}
-@keyframes correctPulse{0%,100%{box-shadow:var(--glow-g)}50%{box-shadow:0 0 32px rgba(0,255,136,.6)}}
+.fb-pill.shake{animation:shake .3s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 
-/* ═══════════════ FORM SCORE HUD ═══════════════ */
-.form-score-hud{position:absolute;top:10px;right:14px;z-index:12;background:rgba(7,10,15,.82);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:12px;padding:6px 12px;text-align:center;min-width:64px}
-.fs-val{font-family:'Space Mono',monospace;font-size:1.15rem;font-weight:700;line-height:1;transition:color .4s}
-.fs-lbl{font-size:.52rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
-
-/* ═══════════════ HUD TOP LEFT ═══════════════ */
-.cam-top-left{position:absolute;top:10px;left:14px;z-index:12;display:flex;flex-direction:column;gap:6px}
-.cam-timer{background:rgba(7,10,15,.78);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:9px;padding:5px 12px;font-family:'Space Mono',monospace;font-size:.92rem;font-weight:700;color:var(--accent)}
-.fps-badge{background:rgba(7,10,15,.6);border:1px solid var(--border);border-radius:7px;padding:3px 8px;font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted)}
-
-/* ═══════════════ REP FLASH ═══════════════ */
-.rep-flash{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:15;pointer-events:none;font-family:'Space Mono',monospace;font-size:5rem;font-weight:900;color:var(--green);text-shadow:0 0 40px rgba(0,255,136,.8);opacity:0}
-.rep-flash.show{animation:rf .65s ease-out forwards}
-@keyframes rf{0%{opacity:1;transform:translate(-50%,-50%) scale(.55)}40%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.5)}}
-
-/* ═══════════════ PROGRESS ARC (hold/reps) ═══════════════ */
-.prog-arc{position:absolute;bottom:76px;right:14px;z-index:12;pointer-events:none}
+/* ── HUD elements ── */
+.cam-top-left{position:absolute;top:9px;left:12px;z-index:12;display:flex;flex-direction:column;gap:5px}
+.cam-timer{background:rgba(7,10,15,.8);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:9px;padding:4px 11px;font-family:'Space Mono',monospace;font-size:.9rem;font-weight:700;color:var(--accent)}
+.fps-badge{background:rgba(7,10,15,.6);border:1px solid var(--border);border-radius:6px;padding:2px 7px;font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted)}
+.form-score-hud{position:absolute;top:9px;right:12px;z-index:12;background:rgba(7,10,15,.8);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:10px;padding:5px 11px;text-align:center;min-width:58px}
+.fs-val{font-family:'Space Mono',monospace;font-size:1.1rem;font-weight:700;line-height:1;transition:color .4s}
+.fs-lbl{font-size:.5rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:1px}
+.rep-flash{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:15;pointer-events:none;font-family:'Space Mono',monospace;font-size:4.5rem;font-weight:900;color:var(--green);text-shadow:0 0 36px rgba(0,255,136,.8);opacity:0}
+.rep-flash.show{animation:rf .6s ease-out forwards}
+@keyframes rf{0%{opacity:1;transform:translate(-50%,-50%) scale(.5)}40%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.45)}}
+/* Motion stopped warning */
+.motion-warn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:14;pointer-events:none;background:rgba(255,59,107,.15);border:1.5px solid var(--red);border-radius:14px;padding:10px 20px;color:var(--red);font-size:.85rem;font-weight:700;backdrop-filter:blur(8px);display:none;text-align:center;white-space:nowrap}
+.motion-warn.show{display:block}
+/* Progress arc */
+.prog-arc{position:absolute;bottom:75px;right:12px;z-index:12;pointer-events:none}
 .prog-arc svg{transform:rotate(-90deg)}
 .prog-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.prog-val{font-family:'Space Mono',monospace;font-size:.75rem;font-weight:700;color:var(--text);line-height:1}
-.prog-sub{font-size:.45rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:1px}
-
-/* ═══════════════ BOTTOM CONTROLS ═══════════════ */
-.cam-bot{position:absolute;bottom:0;left:0;right:0;padding:10px 14px;background:linear-gradient(to top,rgba(7,10,15,.92) 0%,transparent 100%);display:flex;align-items:center;justify-content:center;gap:9px;z-index:10}
-.cbtn{background:rgba(14,20,32,.9);backdrop-filter:blur(8px);border:1px solid var(--border);color:var(--text);font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;padding:8px 15px;border-radius:9px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.prog-val{font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;color:var(--text);line-height:1}
+.prog-sub{font-size:.43rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:1px}
+/* Gemini insight bubble */
+.ai-bubble{position:absolute;bottom:68px;left:12px;z-index:12;background:rgba(123,97,255,.15);backdrop-filter:blur(10px);border:1px solid rgba(123,97,255,.35);border-radius:12px;padding:8px 13px;font-size:.72rem;color:#C4B8FF;max-width:180px;line-height:1.4;display:none;pointer-events:none}
+.ai-bubble.show{display:block}
+.ai-bubble-label{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent2);margin-bottom:3px}
+.cam-bot{position:absolute;bottom:0;left:0;right:0;padding:9px 12px;background:linear-gradient(to top,rgba(7,10,15,.92) 0%,transparent 100%);display:flex;align-items:center;justify-content:center;gap:8px;z-index:10}
+.cbtn{background:rgba(14,20,32,.9);backdrop-filter:blur(8px);border:1px solid var(--border);color:var(--text);font-family:'Outfit',sans-serif;font-size:.76rem;font-weight:600;padding:7px 14px;border-radius:8px;cursor:pointer;transition:all .2s;white-space:nowrap}
 .cbtn:hover{border-color:var(--accent);color:var(--accent)}
 .cbtn.danger{border-color:rgba(255,59,107,.5);color:var(--red)}
 
-/* ═══════════════ STATS STRIP ═══════════════ */
+/* ── STATS STRIP ── */
 .stats-strip{background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;display:flex;align-items:stretch;overflow-x:auto;scrollbar-width:none}
 .stats-strip::-webkit-scrollbar{display:none}
-.sc{flex:1;min-width:66px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:9px 7px;border-right:1px solid var(--border)}
+.sc{flex:1;min-width:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 6px;border-right:1px solid var(--border)}
 .sc:last-child{border-right:none}
-.sv{font-family:'Space Mono',monospace;font-size:1.3rem;font-weight:700;color:var(--accent);line-height:1;transition:color .2s,transform .2s}
+.sv{font-family:'Space Mono',monospace;font-size:1.25rem;font-weight:700;color:var(--accent);line-height:1;transition:color .2s,transform .2s}
 .sv.flash{color:var(--green);transform:scale(1.3)}
-.sl{font-size:.56rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
-.score-cell{flex:1.5;min-width:100px;display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 10px;border-right:1px solid var(--border)}
+.sl{font-size:.54rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+.score-cell{flex:1.5;min-width:96px;display:flex;align-items:center;justify-content:center;gap:9px;padding:7px 9px;border-right:1px solid var(--border)}
 .srw{position:relative;flex-shrink:0}
 .srw svg{transform:rotate(-90deg)}
 .sca{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.sca .sn{font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:var(--text);line-height:1}
-.sca .sl2{font-size:.46rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
-.score-detail{flex:1;font-size:.67rem;min-width:0}
-.sdr{display:flex;justify-content:space-between;margin-bottom:2px;gap:4px}
-.sdr span:first-child{color:var(--muted);white-space:nowrap}
+.sca .sn{font-family:'Space Mono',monospace;font-size:.98rem;font-weight:700;color:var(--text);line-height:1}
+.sca .sl2{font-size:.44rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.score-detail{flex:1;font-size:.65rem;min-width:0}
+.sdr{display:flex;justify-content:space-between;margin-bottom:2px;gap:3px}
+.sdr span:first-child{color:var(--muted)}
 .sdr span:last-child{font-family:'Space Mono',monospace;font-weight:700;flex-shrink:0}
-.sb{height:3px;background:var(--border);border-radius:2px;margin-bottom:5px;overflow:hidden}
+.sb{height:3px;background:var(--border);border-radius:2px;margin-bottom:4px;overflow:hidden}
 .sbf{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:2px;transition:width .6s ease}
-
-/* Guide & TMT strips */
-.guide-strip{display:none;padding:8px 14px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0}
-.guide-strip-title{font-size:.72rem;font-weight:700;color:var(--accent);margin-bottom:5px}
-.guide-cues{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.guide-strip{display:none;padding:7px 12px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.guide-title{font-size:.7rem;font-weight:700;color:var(--accent);margin-bottom:4px}
+.guide-cues{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
 .guide-cues::-webkit-scrollbar{display:none}
-.cue-chip{flex-shrink:0;background:var(--surface2);border:1px solid var(--border);border-radius:999px;padding:4px 10px;font-size:.65rem;color:var(--muted);white-space:nowrap}
-.tmt-strip{display:none;padding:8px 14px;border-top:1px solid rgba(0,229,255,.2);background:rgba(0,229,255,.04);flex-shrink:0;gap:20px}
+.cue-chip{flex-shrink:0;background:var(--surface2);border:1px solid var(--border);border-radius:999px;padding:3px 10px;font-size:.63rem;color:var(--muted);white-space:nowrap}
+.tmt-strip{display:none;padding:7px 12px;border-top:1px solid rgba(0,229,255,.2);background:rgba(0,229,255,.04);flex-shrink:0;gap:18px;align-items:center}
 .tmt-strip.show{display:flex}
-.ti{text-align:center}
-.ti .tv{font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:var(--green)}
-.ti .tl{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.ti .tv{font-family:'Space Mono',monospace;font-size:.98rem;font-weight:700;color:var(--green)}
+.ti .tl{font-size:.57rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:1px}
+.ai-insight-strip{display:none;padding:7px 12px;border-top:1px solid rgba(123,97,255,.2);background:rgba(123,97,255,.06);flex-shrink:0;font-size:.68rem;color:#B0A4FF;line-height:1.5}
+.ai-insight-strip.show{display:block}
 
-/* AI Insight */
-.ai-insight{display:none;padding:7px 14px;background:rgba(123,97,255,.08);border-top:1px solid rgba(123,97,255,.2);flex-shrink:0;font-size:.7rem;color:#9D8FFF;font-style:italic}
-.ai-insight.show{display:block}
-
-/* ═══════════════ RESULTS ═══════════════ */
-#results-overlay{display:none;position:fixed;inset:0;background:rgba(7,10,15,.94);backdrop-filter:blur(14px);z-index:100;align-items:center;justify-content:center;overflow-y:auto;padding:20px}
+/* ── RESULTS ── */
+#results-overlay{display:none;position:fixed;inset:0;background:rgba(7,10,15,.94);backdrop-filter:blur(14px);z-index:100;align-items:flex-start;justify-content:center;overflow-y:auto;padding:16px}
 #results-overlay.show{display:flex}
-.rc{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:28px 22px;max-width:420px;width:100%;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.65)}
-.rc h2{font-size:1.3rem;font-weight:900;margin-bottom:5px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.sname{font-size:.72rem;color:var(--muted);margin-bottom:20px;text-transform:uppercase;letter-spacing:.08em}
-.big-score{font-family:'Space Mono',monospace;font-size:4rem;font-weight:700;line-height:1;margin-bottom:4px}
-.rs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px}
-.rs-box{background:var(--surface2);border-radius:11px;padding:11px 7px}
-.rs-box .rv{font-family:'Space Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--accent)}
-.rs-box .rl{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-top:3px}
-.tmt-block{background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.2);border-radius:13px;padding:13px;margin-bottom:16px;text-align:left}
-.tmt-block h4{font-size:.7rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px}
-.tr-row{display:flex;justify-content:space-between;font-size:.74rem;margin-bottom:4px}
+.rc{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px 20px;max-width:420px;width:100%;text-align:center;box-shadow:0 28px 70px rgba(0,0,0,.65);margin:auto}
+.rc h2{font-size:1.25rem;font-weight:900;margin-bottom:4px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sname{font-size:.7rem;color:var(--muted);margin-bottom:16px;text-transform:uppercase;letter-spacing:.08em}
+.big-score{font-family:'Space Mono',monospace;font-size:3.8rem;font-weight:700;line-height:1;margin-bottom:4px}
+.rs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;margin-top:16px}
+.rs-box{background:var(--surface2);border-radius:10px;padding:10px 6px}
+.rs-box .rv{font-family:'Space Mono',monospace;font-size:1.15rem;font-weight:700;color:var(--accent)}
+.rs-box .rl{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-top:3px}
+.tmt-block{background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.2);border-radius:12px;padding:12px;margin-bottom:14px;text-align:left;display:none}
+.tmt-block h4{font-size:.68rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px}
+.tr-row{display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:4px}
 .tr-row span:first-child{color:var(--muted)}
 .tr-row span:last-child{font-weight:700;font-family:'Space Mono',monospace}
-/* AI insight in results */
-.result-insight{background:rgba(123,97,255,.1);border:1px solid rgba(123,97,255,.25);border-radius:12px;padding:11px 14px;margin-bottom:16px;font-size:.78rem;color:#B0A4FF;text-align:left;line-height:1.5}
-.result-insight span{display:block;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent2);margin-bottom:4px}
-.r-actions{display:flex;gap:9px}
-.r-actions button{flex:1;padding:12px;border-radius:11px;font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;border:none;transition:all .2s}
+.ai-result-block{background:rgba(123,97,255,.1);border:1px solid rgba(123,97,255,.25);border-radius:12px;padding:12px 14px;margin-bottom:14px;text-align:left;display:none}
+.ai-result-block.show{display:block}
+.ai-result-block h4{font-size:.68rem;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px}
+.ai-result-text{font-size:.76rem;color:#C4B8FF;line-height:1.6}
+/* Feedback form */
+.feedback-block{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:14px;text-align:left}
+.feedback-block h4{font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.star-row{display:flex;gap:6px;justify-content:center;margin-bottom:8px}
+.star{font-size:1.6rem;cursor:pointer;opacity:.3;transition:all .15s;line-height:1}
+.star.on{opacity:1}
+.feedback-textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.78rem;padding:8px 11px;resize:vertical;min-height:56px;outline:none;transition:border-color .2s}
+.feedback-textarea:focus{border-color:var(--accent2)}
+.feedback-textarea::placeholder{color:var(--muted)}
+.feedback-submit{margin-top:7px;width:100%;padding:9px;border-radius:9px;background:linear-gradient(135deg,var(--accent2),var(--accent));border:none;color:#07090D;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:800;cursor:pointer;transition:opacity .2s}
+.feedback-submit:hover{opacity:.85}
+.r-actions{display:flex;gap:8px}
+.r-actions button{flex:1;padding:11px;border-radius:10px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;border:none;transition:all .2s}
 .btn-retry{background:var(--surface2);color:var(--text);border:1px solid var(--border) !important}
 .btn-retry:hover{border-color:var(--accent) !important;color:var(--accent)}
 .btn-home{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#07090D;font-weight:800}
 
-/* ═══════════════ LOADING ═══════════════ */
-#loading-screen{display:none;position:fixed;inset:0;background:var(--bg);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+/* ── LOADING ── */
+#loading-screen{display:none;position:fixed;inset:0;background:var(--bg);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:14px}
 #loading-screen.show{display:flex}
-#loading-screen p{color:var(--muted);font-size:.82rem;text-align:center;padding:0 24px}
-.lb{width:180px;height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+#loading-screen p{color:var(--muted);font-size:.8rem;text-align:center;padding:0 20px}
+.lb{width:170px;height:3px;background:var(--border);border-radius:2px;overflow:hidden}
 .lbf{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:2px;animation:la 1.8s ease-in-out infinite}
 @keyframes la{0%{width:0%;margin-left:0}50%{width:70%;margin-left:0}100%{width:0%;margin-left:100%}}
 
-/* ═══════════════ DESKTOP ═══════════════ */
+/* ── DESKTOP ── */
 @media(min-width:768px){
+  .mode-grid{grid-template-columns:repeat(3,1fr)}
   .t-body{flex-direction:row}
   .cam-wrap{flex:1}
-  .stats-strip{flex-direction:column;width:284px;border-top:none;border-left:1px solid var(--border);overflow-y:auto;overflow-x:hidden;flex-shrink:0}
-  .sc{flex:none;flex-direction:row;justify-content:space-between;padding:14px 18px;min-width:auto;border-right:none;border-bottom:1px solid var(--border)}
+  .stats-strip{flex-direction:column;width:276px;border-top:none;border-left:1px solid var(--border);overflow-y:auto;overflow-x:hidden;flex-shrink:0}
+  .sc{flex:none;flex-direction:row;justify-content:space-between;padding:13px 16px;min-width:auto;border-right:none;border-bottom:1px solid var(--border)}
   .sc:last-child{border-bottom:none}
-  .sv{font-size:1.65rem}
-  .sl{margin-top:0;font-size:.62rem}
-  .score-cell{flex:none;padding:14px 18px;border-right:none;border-bottom:1px solid var(--border);min-width:auto;justify-content:flex-start;gap:14px}
+  .sv{font-size:1.6rem}
+  .sl{margin-top:0;font-size:.6rem}
+  .score-cell{flex:none;padding:13px 16px;border-right:none;border-bottom:1px solid var(--border);min-width:auto;justify-content:flex-start;gap:13px}
   .guide-strip{display:block}
-  .tmt-strip{border-top:1px solid rgba(0,229,255,.2);flex-direction:column;align-items:flex-start}
-  .ai-insight{display:block}
-  .fb-wrap{bottom:65px}
-  .prog-arc{bottom:70px}
+  .ai-insight-strip{display:block}
+  .fb-wrap{bottom:62px}
+  .prog-arc{bottom:66px}
 }
 </style>
 </head>
 <body>
 
 <!-- Loading -->
-<div id="loading-screen">
-  <div class="logo-icon">🧘</div>
-  <p id="loading-msg">Loading AI Pose Model…</p>
-  <div class="lb"><div class="lbf"></div></div>
-</div>
+<div id="loading-screen"><div class="logo-icon">🧘</div><p id="loading-msg">Loading AI Pose Model…</p><div class="lb"><div class="lbf"></div></div></div>
 
-<!-- ════════════ LANDING ════════════ -->
+<!-- ══════════ LANDING ══════════ -->
 <div id="landing">
-  <div class="logo-wrap">
-    <div class="logo-icon">🧘</div>
-    <div class="logo-text">AasanAI</div>
-  </div>
+  <div class="logo-wrap"><div class="logo-icon">🧘</div><div class="logo-text">AasanAI</div></div>
   <div class="tagline">AI Yoga · Fitness · Endurance Trainer</div>
   <div class="selection-card">
-    <h2>Select Your Session</h2>
-    <div class="mode-grid">
-      <div class="mode-btn" onclick="selectMode('yoga')" id="mode-yoga"><span class="mi">🙏</span><div class="ml">Yoga & Asanas</div><div class="ms">Posture · Hold</div></div>
-      <div class="mode-btn" onclick="selectMode('exercise')" id="mode-exercise"><span class="mi">💪</span><div class="ml">Exercise</div><div class="ms">Strength · Reps</div></div>
-      <div class="mode-btn" onclick="selectMode('cardio')" id="mode-cardio"><span class="mi">🏃</span><div class="ml">Cardio</div><div class="ms">Endurance · Tempo</div></div>
-      <div class="mode-btn" onclick="selectMode('tmt')" id="mode-tmt"><span class="mi">❤️</span><div class="ml">Endurance Test</div><div class="ms">TMT Surrogate</div></div>
+    <h2>Select Session Type</h2>
+    <div class="mode-grid" style="margin-bottom:8px">
+      <div class="mode-btn" onclick="selectMode('yoga')" id="mode-yoga"><span class="mi">🙏</span><div class="ml">Yoga</div><div class="ms">Asanas</div></div>
+      <div class="mode-btn" onclick="selectMode('exercise')" id="mode-exercise"><span class="mi">💪</span><div class="ml">Exercise</div><div class="ms">Strength</div></div>
+      <div class="mode-btn" onclick="selectMode('cardio')" id="mode-cardio"><span class="mi">🏃</span><div class="ml">Cardio</div><div class="ms">Endurance</div></div>
     </div>
+    <div class="mode-grid-2" style="margin-bottom:14px">
+      <div class="mode-btn" onclick="selectMode('arthritis')" id="mode-arthritis"><span class="mi">🦵</span><div class="ml">Arthritis Care</div><div class="ms">Knee Strength</div></div>
+      <div class="mode-btn" onclick="selectMode('weightloss')" id="mode-weightloss"><span class="mi">🔥</span><div class="ml">Weight Loss</div><div class="ms">Fat Burn</div></div>
+    </div>
+    <div class="mode-grid-2">
+      <div class="mode-btn" onclick="selectMode('tmt')" id="mode-tmt"><span class="mi">❤️</span><div class="ml">Endurance Test</div><div class="ms">TMT Surrogate</div></div>
+      <div class="mode-btn" id="mode-placeholder" style="opacity:.35;cursor:default"><span class="mi">📊</span><div class="ml">Reports</div><div class="ms">Coming Soon</div></div>
+    </div>
+    <div style="height:14px"></div>
     <div class="ex-wrap" id="ex-wrap">
-      <label id="ex-label">Choose Exercise</label>
+      <label id="ex-label">Choose Exercise / Asana</label>
       <select id="ex-select"><option value="">— Select —</option></select>
     </div>
+    <!-- Gemini AI toggle -->
+    <button class="gemini-toggle" onclick="toggleGeminiPanel()">✦ Gemini AI Coach <span id="gemini-toggle-txt">(tap to configure)</span></button>
+    <div class="gemini-wrap" id="gemini-wrap">
+      <div class="gemini-header">
+        <span>✦ Gemini AI</span>
+        <span class="gemini-status disconnected" id="gemini-status">Not Connected</span>
+      </div>
+      <div class="gemini-row">
+        <input class="gemini-input" id="gemini-key" type="password" placeholder="Paste your Gemini API key (optional)">
+        <button class="gemini-connect-btn" onclick="connectGemini()">Connect</button>
+      </div>
+      <div class="gemini-model-row">
+        <label>Model:</label>
+        <select id="gemini-model" style="flex:1;padding:6px 32px 6px 9px;font-size:.72rem">
+          <option value="gemini-1.5-flash">gemini-1.5-flash (fast)</option>
+          <option value="gemini-1.5-pro">gemini-1.5-pro (smart)</option>
+          <option value="gemini-2.0-flash">gemini-2.0-flash (latest)</option>
+        </select>
+      </div>
+      <div style="font-size:.62rem;color:var(--muted);margin-top:5px;line-height:1.4">Key stored in memory only · Never sent to our servers · Completely optional</div>
+    </div>
     <button class="start-btn" id="start-btn" onclick="startSession()" disabled>Start Session →</button>
-    <p class="disclaimer">Camera required · 100% in-browser · No video stored<br>Consult a physician before starting any fitness program</p>
+    <p class="disclaimer">Camera required · 100% in-browser · No video stored or uploaded · Consult a physician before any fitness program</p>
   </div>
 </div>
 
-<!-- ════════════ TRAINER ════════════ -->
+<!-- ══════════ TRAINER ══════════ -->
 <div id="trainer">
   <div class="t-header">
-    <div class="t-title">
-      <span id="t-icon">🧘</span>
-      <span id="t-title">Session</span>
-      <span class="badge">LIVE</span>
-    </div>
+    <div class="t-title"><span id="t-icon">🧘</span><span id="t-title-txt">Session</span><span class="badge">LIVE</span></div>
     <div class="header-actions">
-      <button class="voice-btn" id="voice-btn" onclick="toggleVoice()">🔊 Voice</button>
-      <button class="back-btn" onclick="endSession()">✕ End</button>
+      <button class="hbtn hbtn-voice" id="voice-btn" onclick="toggleVoice()">🔊</button>
+      <button class="hbtn hbtn-ai" id="ai-btn" onclick="toggleAI()" title="Gemini AI Coach">✦ AI</button>
+      <button class="hbtn hbtn-end" onclick="endSession()">✕ End</button>
     </div>
   </div>
-
   <div class="t-body">
     <!-- Camera -->
     <div class="cam-wrap" id="cam-wrap">
       <video id="videoElement" autoplay playsinline muted></video>
       <canvas id="poseCanvas"></canvas>
+      <div class="cam-vignette"></div>
+      <div class="cam-init-overlay" id="cam-init"><div class="spinner"></div><p id="cam-msg">Requesting camera…</p></div>
 
-      <!-- Camera loading -->
-      <div class="cam-init-overlay" id="cam-init">
-        <div class="spinner"></div>
-        <p id="cam-msg">Requesting camera access…</p>
-      </div>
-
-      <!-- CALIBRATION OVERLAY -->
+      <!-- CALIBRATION -->
       <div id="calib-overlay">
         <div class="calib-icon" id="calib-icon">🧍</div>
-        <div class="calib-title" id="calib-title">Position Your Body</div>
-        <div class="calib-sub" id="calib-sub">Stand back so your full body — head to ankles — is visible.</div>
+        <div class="calib-title" id="calib-title">Position Yourself</div>
+        <div class="calib-sub" id="calib-sub">Step back so your full body is visible head to ankles.</div>
+        <div class="calib-ex-hint" id="calib-ex-hint"></div>
         <div class="calib-checks">
-          <div class="cr" id="chk-body"><div class="cdot"></div><span>Full body visible (head to ankles)</span></div>
-          <div class="cr" id="chk-stand"><div class="cdot"></div><span>Standing upright, facing camera</span></div>
+          <div class="cr" id="chk-body"><div class="cdot"></div><span id="chk-body-txt">Full body visible (head to ankles)</span></div>
+          <div class="cr" id="chk-pose"><div class="cdot"></div><span id="chk-pose-txt">In starting position</span></div>
           <div class="cr" id="chk-still"><div class="cdot"></div><span>Hold still 2 seconds</span></div>
         </div>
-        <!-- Auto-countdown ring (replaces manual button) -->
         <div class="countdown-wrap" id="cd-wrap" style="display:none">
           <div class="cd-ring">
-            <svg width="72" height="72" viewBox="0 0 72 72">
-              <circle cx="36" cy="36" r="30" stroke="#1E2A40" stroke-width="6" fill="none"/>
-              <circle cx="36" cy="36" r="30" stroke="#00FF88" stroke-width="6" fill="none"
-                stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5"
-                id="cd-arc" style="transition:stroke-dashoffset .25s linear"/>
-            </svg>
+            <svg width="68" height="68" viewBox="0 0 68 68"><circle cx="34" cy="34" r="28" stroke="#1E2A40" stroke-width="6" fill="none"/><circle cx="34" cy="34" r="28" stroke="#00FF88" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="175.9" stroke-dashoffset="175.9" id="cd-arc" style="transition:stroke-dashoffset .25s linear"/></svg>
             <div class="cd-num" id="cd-num">3</div>
           </div>
           <div class="cd-label">Starting in…</div>
         </div>
       </div>
 
-      <!-- Direction arrow overlay -->
+      <!-- Overlays -->
       <div class="dir-arrow" id="dir-arrow">➡</div>
-
-      <!-- Rep flash -->
       <div class="rep-flash" id="rep-flash"></div>
+      <div class="motion-warn" id="motion-warn">⚠️ Keep moving — resume exercise!</div>
 
-      <!-- Status bar (top centre) -->
-      <div class="status-bar s-none" id="status-bar">
-        <div class="sring"></div>
-        <span id="status-txt">Not Detected</span>
-      </div>
-
-      <!-- Top left: timer + fps -->
-      <div class="cam-top-left">
-        <div class="cam-timer" id="timer">00:00</div>
-        <div class="fps-badge" id="fps-badge">-- FPS</div>
-      </div>
-
-      <!-- Form score HUD (top right) -->
-      <div class="form-score-hud" id="form-hud">
-        <div class="fs-val" id="form-score-val" style="color:var(--muted)">—</div>
-        <div class="fs-lbl">Form</div>
-      </div>
-
-      <!-- Feedback pill -->
-      <div class="fb-wrap">
-        <div class="fb-pill neutral" id="fb-pill">
-          <span id="fb-icon">⏳</span>
-          <span id="fb-text">Calibrating…</span>
-        </div>
-      </div>
-
-      <!-- Progress arc (hold/rep progress) -->
-      <div class="prog-arc" id="prog-arc">
-        <svg width="56" height="56" viewBox="0 0 56 56">
-          <circle cx="28" cy="28" r="22" stroke="#1E2A40" stroke-width="5" fill="none"/>
-          <circle cx="28" cy="28" r="22" stroke="url(#pg)" stroke-width="5" fill="none"
-            stroke-linecap="round" stroke-dasharray="138.2" stroke-dashoffset="138.2"
-            id="prog-ring" style="transition:stroke-dashoffset .3s ease"/>
-          <defs><linearGradient id="pg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#7B61FF"/><stop offset="100%" style="stop-color:#00FF88"/></linearGradient></defs>
-        </svg>
-        <div class="prog-center">
-          <div class="prog-val" id="prog-val">0</div>
-          <div class="prog-sub" id="prog-sub">reps</div>
-        </div>
-      </div>
-
-      <!-- Bottom controls -->
+      <!-- HUD -->
+      <div class="status-bar s-none" id="status-bar"><div class="sring"></div><span id="status-txt">Not Detected</span></div>
+      <div class="cam-top-left"><div class="cam-timer" id="timer">00:00</div><div class="fps-badge" id="fps-badge">-- fps</div></div>
+      <div class="form-score-hud"><div class="fs-val" id="form-score-val" style="color:var(--muted)">—</div><div class="fs-lbl">Form</div></div>
+      <div class="fb-wrap"><div class="fb-pill neutral" id="fb-pill"><span id="fb-icon">⏳</span><span id="fb-text">Calibrating…</span></div></div>
+      <div class="prog-arc"><svg width="52" height="52" viewBox="0 0 52 52"><circle cx="26" cy="26" r="20" stroke="#1E2A40" stroke-width="5" fill="none"/><circle cx="26" cy="26" r="20" stroke="url(#pg)" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="125.7" stroke-dashoffset="125.7" id="prog-ring" style="transition:stroke-dashoffset .3s ease"/><defs><linearGradient id="pg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#7B61FF"/><stop offset="100%" style="stop-color:#00FF88"/></linearGradient></defs></svg><div class="prog-center"><div class="prog-val" id="prog-val">0</div><div class="prog-sub" id="prog-sub">reps</div></div></div>
+      <div class="ai-bubble" id="ai-bubble"><div class="ai-bubble-label">✦ AI Coach</div><div id="ai-bubble-text">Analysing…</div></div>
       <div class="cam-bot">
         <button class="cbtn" onclick="togglePause()" id="pause-btn">⏸ Pause</button>
         <button class="cbtn" onclick="skipExercise()">Next →</button>
@@ -383,18 +382,9 @@ select option{background:#0E1420}
     </div>
 
     <!-- Stats Panel -->
-    <div class="stats-strip" id="stats-strip">
+    <div class="stats-strip">
       <div class="score-cell">
-        <div class="srw">
-          <svg width="68" height="68" viewBox="0 0 68 68">
-            <circle cx="34" cy="34" r="28" stroke="#1E2A40" stroke-width="7" fill="none"/>
-            <circle cx="34" cy="34" r="28" stroke="url(#sg)" stroke-width="7" fill="none"
-              stroke-linecap="round" stroke-dasharray="175.9" stroke-dashoffset="175.9"
-              id="score-ring" style="transition:stroke-dashoffset .5s ease"/>
-            <defs><linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#7B61FF"/><stop offset="100%" style="stop-color:#00E5FF"/></linearGradient></defs>
-          </svg>
-          <div class="sca"><div class="sn" id="score-num">0</div><div class="sl2">Score</div></div>
-        </div>
+        <div class="srw"><svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" stroke="#1E2A40" stroke-width="7" fill="none"/><circle cx="32" cy="32" r="26" stroke="url(#sg)" stroke-width="7" fill="none" stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="163.4" id="score-ring" style="transition:stroke-dashoffset .5s ease"/><defs><linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#7B61FF"/><stop offset="100%" style="stop-color:#00E5FF"/></linearGradient></defs></svg><div class="sca"><div class="sn" id="score-num">0</div><div class="sl2">Score</div></div></div>
         <div class="score-detail">
           <div class="sdr"><span>Form</span><span id="sf">0</span></div><div class="sb"><div class="sbf" id="bf" style="width:0%"></div></div>
           <div class="sdr"><span>Endurance</span><span id="se">0</span></div><div class="sb"><div class="sbf" id="be" style="width:0%"></div></div>
@@ -404,15 +394,13 @@ select option{background:#0E1420}
       <div class="sc"><div class="sv" id="rep-count">0</div><div class="sl">Reps</div></div>
       <div class="sc"><div class="sv" id="hold-time">0s</div><div class="sl">Hold</div></div>
       <div class="sc"><div class="sv" id="acc-pct">—</div><div class="sl">Accuracy</div></div>
-      <div class="guide-strip" id="guide-strip">
-        <div class="guide-strip-title" id="guide-title">Guide</div>
-        <div class="guide-cues" id="guide-cues"></div>
-      </div>
+      <div class="guide-strip" id="guide-strip"><div class="guide-title" id="guide-title">Guide</div><div class="guide-cues" id="guide-cues"></div></div>
       <div class="tmt-strip" id="tmt-strip">
-        <div class="ti"><div class="tv" id="tmt-mets">—</div><div class="tl">Est. METs</div></div>
+        <div class="ti"><div class="tv" id="tmt-mets">—</div><div class="tl">METs</div></div>
         <div class="ti"><div class="tv" id="tmt-cat" style="color:var(--accent)">—</div><div class="tl">Category</div></div>
+        <div class="ti"><div class="tv" id="tmt-steps" style="color:var(--yellow)">0</div><div class="tl">Steps</div></div>
       </div>
-      <div class="ai-insight" id="ai-insight">🧠 Awaiting session data…</div>
+      <div class="ai-insight-strip" id="ai-insight-strip">🧠 AI insight will appear here…</div>
     </div>
   </div>
 </div>
@@ -423,79 +411,178 @@ select option{background:#0E1420}
     <h2>Session Complete!</h2>
     <div class="sname" id="r-session"></div>
     <div class="big-score" id="r-score">—</div>
-    <div id="r-grade" style="margin-bottom:20px;display:inline-block"></div>
+    <div id="r-grade" style="display:inline-block;margin-bottom:4px"></div>
     <div class="rs-grid">
       <div class="rs-box"><div class="rv" id="r-reps">0</div><div class="rl">Reps</div></div>
       <div class="rs-box"><div class="rv" id="r-time">0:00</div><div class="rl">Duration</div></div>
       <div class="rs-box"><div class="rv" id="r-acc">0%</div><div class="rl">Accuracy</div></div>
     </div>
-    <div class="result-insight" id="r-insight"><span>AI Coach Insight</span><span id="r-insight-text">Complete a session to get personalised insights.</span></div>
-    <div class="tmt-block" id="r-tmt">
-      <h4>🫀 TMT Surrogate Report</h4>
+    <div class="ai-result-block" id="r-ai-block"><h4>✦ Gemini AI Coach Analysis</h4><div class="ai-result-text" id="r-ai-text">…</div></div>
+    <div class="tmt-block" id="r-tmt"><h4>🫀 TMT Surrogate Report</h4>
       <div class="tr-row"><span>Estimated METs</span><span id="r-mets">—</span></div>
       <div class="tr-row"><span>Functional Capacity</span><span id="r-fc">—</span></div>
       <div class="tr-row"><span>Cardiovascular Category</span><span id="r-cvcat">—</span></div>
       <div class="tr-row"><span>Clinical Interpretation</span><span id="r-interp">—</span></div>
     </div>
-    <div class="r-actions">
-      <button class="btn-retry" onclick="retrySession()">↩ Retry</button>
-      <button class="btn-home" onclick="goHome()">🏠 Home</button>
+    <div class="feedback-block">
+      <h4>Rate Your Session</h4>
+      <div class="star-row" id="star-row">
+        <span class="star" onclick="rateStar(1)">★</span><span class="star" onclick="rateStar(2)">★</span>
+        <span class="star" onclick="rateStar(3)">★</span><span class="star" onclick="rateStar(4)">★</span><span class="star" onclick="rateStar(5)">★</span>
+      </div>
+      <textarea class="feedback-textarea" id="feedback-text" placeholder="Any comments or suggestions? (optional)"></textarea>
+      <button class="feedback-submit" onclick="submitFeedback()">Submit Feedback</button>
     </div>
+    <div class="r-actions"><button class="btn-retry" onclick="retrySession()">↩ Retry</button><button class="btn-home" onclick="goHome()">🏠 Home</button></div>
   </div>
 </div>
 
 <script>
 'use strict';
-// ═══════════════════════════════════════════════════════
-//  EXERCISE LIBRARY  (unchanged from original)
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+//  EXERCISE LIBRARY
+// ══════════════════════════════════════════════════
 const EX={
   yoga:[
     {id:'tadasana',name:'Mountain Pose (Tadasana)',icon:'🏔️',type:'hold',targetHold:20,targetReps:3,
-     cues:['Stand tall, feet hip-width','Arms at sides, palms forward','Chin level to floor','Breathe: 4s in, 4s out'],
-     check:checkTadasana,sm:{rs:20,mt:90}},
-    {id:'warrior1',name:'Warrior I',icon:'⚔️',type:'rep',targetReps:6,
-     cues:['Front knee bent 90°','Back leg straight','Arms overhead','Hips squared forward'],
-     check:checkWarrior1,sm:{rs:14,mt:120}},
+     calibCheck:calibStand, // uses standard stand calibration
+     startHint:'Stand tall with feet hip-width apart, arms at sides.',
+     checkHint:'Stand upright, arms relaxed, spine straight.',
+     cues:['Feet hip-width apart','Arms relaxed at sides','Chin level, gaze forward','Breathe: 4s in, 4s out'],
+     check:checkTadasana,sm:{rs:20,mt:90},
+     // Reference pose keypoints (normalised 0-1) for ghost drawing
+     ghost:{11:[.42,.28],12:[.58,.28],13:[.36,.40],14:[.64,.40],15:[.32,.52],16:[.68,.52],23:[.44,.52],24:[.56,.52],25:[.44,.70],26:[.56,.70],27:[.44,.88],28:[.56,.88]}},
+    {id:'warrior1',name:'Warrior I (Virabhadrasana I)',icon:'⚔️',type:'rep',targetReps:6,
+     calibCheck:calibStand,
+     startHint:'Step one foot forward. Bend front knee, keep back leg straight. Raise arms overhead.',
+     checkHint:'Front knee 90°, arms fully overhead, hips squared forward.',
+     cues:['Front knee bent 90°','Back leg straight','Arms overhead, palms together','Hips squared forward'],
+     check:checkWarrior1,sm:{rs:14,mt:120},
+     ghost:{11:[.42,.26],12:[.58,.26],13:[.35,.38],14:[.62,.38],15:[.30,.22],16:[.70,.22],23:[.44,.48],24:[.58,.48],25:[.36,.68],26:[.62,.68],27:[.32,.88],28:[.60,.88]}},
     {id:'tree',name:'Tree Pose (Vrksasana)',icon:'🌳',type:'hold',targetHold:15,targetReps:2,
-     cues:['Balance on one foot','Foot at inner thigh','Arms overhead','Fix gaze on a point'],
-     check:checkTree,sm:{rs:25,mt:60}},
-    {id:'downdog',name:'Downward Dog',icon:'🐕',type:'hold',targetHold:20,targetReps:3,
-     cues:['Hips high — inverted V','Heels press to floor','Arms straight','Head between arms'],
-     check:checkDownDog,sm:{rs:18,mt:120}},
+     calibCheck:calibStand,
+     startHint:'Stand on one foot. Lift the other foot to your inner thigh. Raise arms overhead.',
+     checkHint:'Balance on one foot, arms overhead, focus on a fixed point.',
+     cues:['Stand on one foot','Other foot at inner thigh','Arms overhead or in prayer','Fix gaze — find your drishti'],
+     check:checkTree,sm:{rs:25,mt:60},
+     ghost:{11:[.43,.27],12:[.57,.27],13:[.38,.40],14:[.62,.40],15:[.36,.20],16:[.64,.20],23:[.45,.50],24:[.55,.50],25:[.44,.68],26:[.58,.58],27:[.44,.87],28:[.61,.72]}},
+    {id:'downdog',name:'Downward Dog (Adho Mukha)',icon:'🐕',type:'hold',targetHold:20,targetReps:3,
+     calibCheck:null, // floor pose
+     startHint:'Get on all fours. Push hips up to form an inverted V. Straighten arms and legs.',
+     checkHint:'Hips high, body forming an inverted V, arms and legs straight.',
+     cues:['Hips high — inverted V shape','Heels press toward floor','Arms fully straight','Head between arms, gaze at feet'],
+     check:checkDownDog,sm:{rs:18,mt:120},
+     ghost:{11:[.38,.35],12:[.62,.35],13:[.30,.42],14:[.70,.42],15:[.25,.50],16:[.75,.50],23:[.50,.20],24:[.50,.20],25:[.44,.50],26:[.56,.50],27:[.43,.75],28:[.57,.75]}},
   ],
   exercise:[
     {id:'squat',name:'Bodyweight Squat',icon:'🦵',type:'rep',targetReps:15,
-     cues:['Feet shoulder-width','Knees track over toes','Thighs parallel at bottom','Chest up, back straight'],
-     check:checkSquat,sm:{rs:5,mt:180}},
+     calibCheck:calibStand,
+     startHint:'Stand with feet shoulder-width apart. You will squat down until thighs are parallel.',
+     checkHint:'Feet shoulder-width, knees track over toes, chest up.',
+     cues:['Feet shoulder-width apart','Knees track over toes','Thighs parallel at bottom','Chest up, back neutral'],
+     check:checkSquat,sm:{rs:5,mt:180},
+     ghost:{11:[.41,.28],12:[.59,.28],23:[.42,.52],24:[.58,.52],25:[.40,.70],26:[.60,.70],27:[.40,.88],28:[.60,.88]}},
     {id:'lunge',name:'Reverse Lunge',icon:'🏋️',type:'rep',targetReps:12,
-     cues:['Step back, lower rear knee','Front knee at 90°','Torso upright','Push through front heel'],
-     check:checkLunge,sm:{rs:6,mt:150}},
+     calibCheck:calibStand,
+     startHint:'Stand upright. Step one foot back and lower your rear knee toward the floor.',
+     checkHint:'Front knee at 90°, rear knee close to floor, torso upright.',
+     cues:['Step back, lower rear knee','Front knee at 90°','Torso upright, core braced','Push through front heel to rise'],
+     check:checkLunge,sm:{rs:6,mt:150},
+     ghost:{11:[.43,.27],12:[.57,.27],23:[.44,.48],24:[.58,.48],25:[.38,.68],26:[.62,.68],27:[.36,.88],28:[.64,.80]}},
     {id:'plank',name:'Plank Hold',icon:'🪵',type:'hold',targetHold:30,targetReps:3,
-     cues:['Perfectly straight line','Core braced tight','Shoulders over wrists','Hips must not sag'],
-     check:checkPlank,sm:{rs:12,mt:180}},
+     calibCheck:null,
+     startHint:'Get into a push-up position. Body must form a perfectly straight line from head to heels.',
+     checkHint:'Body in a straight line — no hip sagging or piking.',
+     cues:['Perfectly straight body line','Core braced, belly button in','Shoulders directly over wrists','Do not let hips sag or rise'],
+     check:checkPlank,sm:{rs:12,mt:180},
+     ghost:{11:[.35,.42],12:[.65,.42],23:[.48,.42],24:[.52,.42],25:[.58,.55],26:[.62,.55],27:[.65,.68],28:[.68,.68]}},
     {id:'jumping_jack',name:'Jumping Jacks',icon:'⭐',type:'rep',targetReps:30,
-     cues:['Arms+feet wide simultaneously','Return to center each rep','Land softly','Steady rhythm'],
-     check:checkJJ,sm:{rs:2.5,mt:120}},
+     calibCheck:calibStand,
+     startHint:'Stand with feet together, arms at sides. Jump feet wide while raising arms overhead simultaneously.',
+     checkHint:'Arms AND feet move together — sync is key.',
+     cues:['Jump feet wide + arms overhead','Return to center simultaneously','Land softly on balls of feet','Keep a steady rhythm'],
+     check:checkJJ,sm:{rs:2.5,mt:120},
+     ghost:{11:[.41,.28],12:[.59,.28],15:[.28,.16],16:[.72,.16],23:[.43,.52],24:[.57,.52],27:[.36,.88],28:[.64,.88]}},
   ],
   cardio:[
     {id:'high_knee',name:'High Knees',icon:'🦵',type:'rep',targetReps:40,
-     cues:['Knees to hip level','Pump arms opposite legs','Balls of feet','Stay upright'],
-     check:checkHighKnee,sm:{rs:2,mt:120}},
+     calibCheck:calibStand,
+     startHint:'March in place, driving each knee up to hip level. Pump arms in sync.',
+     checkHint:'Knee must reach hip level each rep. Stay upright.',
+     cues:['Knees up to hip height each rep','Pump opposite arm with each knee','Stay on balls of feet','Maintain upright posture'],
+     check:checkHighKnee,sm:{rs:2,mt:120},ghost:null},
     {id:'step_march',name:'Step March',icon:'🚶',type:'rep',targetReps:60,
-     cues:['March briskly in place','Swing arms naturally','Knees to waist','Breathe rhythmically'],
-     check:checkMarch,sm:{rs:1.5,mt:180}},
+     calibCheck:calibStand,
+     startHint:'March briskly in place. Lift each knee to waist level with a natural arm swing.',
+     checkHint:'Lift knees to waist height, swing arms naturally.',
+     cues:['March briskly in place','Knees to waist level','Natural arm swing','Breathe rhythmically'],
+     check:checkMarch,sm:{rs:1.5,mt:180},ghost:null},
+  ],
+  arthritis:[
+    {id:'chair_squat',name:'Chair-Assisted Squat',icon:'🪑',type:'rep',targetReps:10,
+     calibCheck:calibStand,
+     startHint:'Stand in front of a chair. Slowly lower as if sitting down, stop just before touching, then rise. Gentle and controlled.',
+     checkHint:'Lower slowly and controlled. Stop before fully sitting. Keep knees behind toes.',
+     cues:['Move slowly — no rushing','Lower to just above the chair','Knees must not go past toes','Push through heels to rise'],
+     check:checkChairSquat,sm:{rs:8,mt:240},ghost:null},
+    {id:'knee_march',name:'Seated Knee March',icon:'🦵',type:'rep',targetReps:20,
+     calibCheck:null,
+     startHint:'Sit upright. Alternately lift each knee up and down in a slow marching motion.',
+     checkHint:'Lift each knee to hip height. Keep back straight and upright.',
+     cues:['Sit tall, spine straight','Lift each knee slowly','Lower with control','Breathe steadily'],
+     check:checkMarch,sm:{rs:4,mt:200},ghost:null},
+    {id:'calf_raise',name:'Standing Calf Raise',icon:'👟',type:'rep',targetReps:15,
+     calibCheck:calibStand,
+     startHint:'Stand with feet hip-width. Rise slowly onto your toes, hold 2 seconds, lower slowly.',
+     checkHint:'Rise onto toes completely. Hold at top. Lower with control — do not drop.',
+     cues:['Rise fully onto toes','Hold at top for 2 seconds','Lower slowly — do not drop','Hold wall if needed for balance'],
+     check:checkCalfRaise,sm:{rs:5,mt:200},ghost:null},
+    {id:'quad_set',name:'Quad Tightening (Isometric)',icon:'⚡',type:'hold',targetHold:10,targetReps:8,
+     calibCheck:null,
+     startHint:'Sit or lie with leg straight. Tighten your thigh muscle, pressing knee down. Hold 10 seconds.',
+     checkHint:'Contract thigh muscle firmly. Knee pressed down, leg straight.',
+     cues:['Tighten thigh muscle firmly','Press knee downward','Hold for 10 seconds','Breathe normally while holding'],
+     check:checkQuadSet,sm:{rs:10,mt:200},ghost:null},
+  ],
+  weightloss:[
+    {id:'burpee',name:'Modified Burpee',icon:'🔥',type:'rep',targetReps:10,
+     calibCheck:calibStand,
+     startHint:'Stand up, bend and place hands on floor, jump or step feet back to plank, return, stand. Full body movement.',
+     checkHint:'Complete the full movement: stand → crouch → plank → crouch → stand.',
+     cues:['Full range of motion each rep','Move at a pace you can sustain','Land softly on feet','Keep core braced throughout'],
+     check:checkBurpee,sm:{rs:8,mt:120},ghost:null},
+    {id:'mountain_climber',name:'Mountain Climbers',icon:'⛰️',type:'rep',targetReps:30,
+     calibCheck:null,
+     startHint:'Start in a plank position. Drive each knee toward your chest alternately in a running motion.',
+     checkHint:'Body stays in plank, drive knees fast toward chest alternately.',
+     cues:['Maintain plank position throughout','Drive knees to chest fast','Keep hips level — do not bob','Breathe continuously'],
+     check:checkMountainClimber,sm:{rs:2,mt:120},ghost:null},
+    {id:'side_lunge',name:'Side Lunge',icon:'↔️',type:'rep',targetReps:20,
+     calibCheck:calibStand,
+     startHint:'Stand wide. Shift weight to one side, bending that knee. Keep the other leg straight. Alternate sides.',
+     checkHint:'Bending knee tracks over toes. Straight leg fully extended. Back flat.',
+     cues:['Step wide, bend one knee','Straight leg stays extended','Back stays flat','Push off bent foot to return'],
+     check:checkSideLunge,sm:{rs:4,mt:150},ghost:null},
+    {id:'jump_squat',name:'Jump Squat',icon:'💥',type:'rep',targetReps:15,
+     calibCheck:calibStand,
+     startHint:'Squat down, then explode upward jumping off both feet. Land softly and go directly into next squat.',
+     checkHint:'Full squat depth, powerful jump, soft landing — absorb with bent knees.',
+     cues:['Full squat before jumping','Explode upward powerfully','Land softly, knees bent','Go directly into next rep'],
+     check:checkJumpSquat,sm:{rs:6,mt:120},ghost:null},
   ],
   tmt:[
     {id:'tmt_step',name:'TMT Step Test',icon:'❤️',type:'rep',targetReps:90,
-     cues:['Step up+down repeatedly','Simulate 20cm step','Target ~30 steps/min','Continue 3 minutes'],
-     check:checkStep,sm:{rs:1,mt:180}},
+     calibCheck:calibStand,
+     startHint:'Step up and down continuously, simulating a 20cm step. Aim for 30 steps per minute for 3 full minutes. This estimates your cardiovascular fitness (METs).',
+     checkHint:'Step up then fully down each rep. Maintain your cadence.',
+     cues:['Step up THEN step down = 1 rep','Target 30 reps per minute','Keep a steady, sustainable pace','Continue for the full 3 minutes'],
+     check:checkStep,sm:{rs:1,mt:180},ghost:null},
   ]
 };
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 //  CORE STATE
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 let mode=null,exId=null,curEx=null;
 let poseModel=null,cam=null,mStream=null;
 let phase='idle'; // idle|calibrating|ready|countdown|active|paused|done
@@ -507,60 +594,96 @@ let calibStill=0,lmSnap=null;
 let scoreD={form:0,end:0,con:0,tot:0};
 let sessionExs=[],exIdx=0;
 
-// ═══════════════════════════════════════════════════════
-//  PREMIUM FEATURE STATE
-// ═══════════════════════════════════════════════════════
-// EMA smoothed landmarks
+// Motion detection
+let motionHistory=[]; // last N positions of hip midpoint
+let motionStoppedFrames=0;
+const MOTION_STOP_THRESHOLD=40; // frames before warning
+const MOTION_SENSITIVITY=0.003; // min movement per frame
+
+// EMA smoothing
 let smoothLm=null;
-const EMA_ALPHA=0.55; // higher = more responsive, lower = smoother
+const EMA=0.55;
 
 // Voice
-let voiceEnabled=true;
-let voiceLastMsg='';
-let voiceCooldownUntil=0;
+let voiceOn=true,voiceLastMsg='',voiceCoolUntil=0;
+// AI
+let geminiKey='',geminiModel='gemini-1.5-flash',geminiConnected=false,aiOn=false;
+let aiCoolUntil=0,aiInsightInterval=null;
+// State lock
+let stateLockUntil=0;
+// FPS
+let fpsF=0,fpsLast=Date.now();
+// Countdown
+let cdTimer=null,cdN=3;
+// Analytics
+let maxStreak=0,curStreak=0,lastFBType='',lastFBText='';
+let feedbackRating=0;
 
-// State lock (prevents rapid transitions)
-let stateLockedUntil=0;
-
-// FPS tracking
-let fpsFrames=0,fpsLast=Date.now(),currentFPS=0;
-
-// Countdown state
-let cdInterval=null,cdCount=3;
-
-// Session analytics for AI insight
-let leftCorrect=0,rightCorrect=0,totalCorrectSide=0;
-let maxStreak=0,curStreak=0;
-let lastFeedbackType='';
-
-// Progress tracking per exercise
-let targetProgress=0;
-
-// ═══════════════════════════════════════════════════════
-//  LANDING
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+//  LANDING LOGIC
+// ══════════════════════════════════════════════════
 function selectMode(m){
   mode=m;
   document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('mode-'+m).classList.add('active');
+  const mb=document.getElementById('mode-'+m);
+  if(mb) mb.classList.add('active');
   const wrap=document.getElementById('ex-wrap'),sel=document.getElementById('ex-select');
   if(m==='tmt'){
     wrap.classList.remove('visible');
     document.getElementById('start-btn').disabled=false;
   } else {
     wrap.classList.add('visible');
-    document.getElementById('ex-label').textContent=m==='yoga'?'Choose Asana':'Choose Exercise';
+    const labels={yoga:'Choose Asana',exercise:'Choose Exercise',cardio:'Choose Exercise',arthritis:'Choose Exercise',weightloss:'Choose Exercise'};
+    document.getElementById('ex-label').textContent=labels[m]||'Choose Exercise';
     sel.innerHTML='<option value="">— Select —</option>'+
-      EX[m].map(e=>`<option value="${e.id}">${e.icon} ${e.name}</option>`).join('')+
+      (EX[m]||[]).map(e=>`<option value="${e.id}">${e.icon} ${e.name}</option>`).join('')+
       `<option value="all">🔄 Full ${m[0].toUpperCase()+m.slice(1)} Circuit</option>`;
     sel.onchange=()=>{exId=sel.value;document.getElementById('start-btn').disabled=!sel.value;};
     document.getElementById('start-btn').disabled=true;
   }
 }
 
-// ═══════════════════════════════════════════════════════
+function toggleGeminiPanel(){
+  const w=document.getElementById('gemini-wrap');
+  const showing=w.classList.toggle('visible');
+  document.getElementById('gemini-toggle-txt').textContent=showing?'(tap to hide)':'(tap to configure)';
+}
+
+function connectGemini(){
+  const k=document.getElementById('gemini-key').value.trim();
+  if(!k){alert('Please enter a Gemini API key.');return;}
+  geminiKey=k;
+  geminiModel=document.getElementById('gemini-model').value;
+  // Quick validation: key must start with AIza
+  if(!k.startsWith('AIza')){
+    document.getElementById('gemini-status').textContent='Invalid Key Format';
+    document.getElementById('gemini-status').className='gemini-status disconnected';
+    return;
+  }
+  geminiConnected=true;
+  aiOn=true;
+  document.getElementById('gemini-status').textContent='Connected';
+  document.getElementById('gemini-status').className='gemini-status connected';
+  document.getElementById('gemini-toggle-txt').textContent='✓ Connected';
+}
+
+async function callGemini(prompt){
+  if(!geminiConnected||!geminiKey) return null;
+  try{
+    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiKey}`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:200,temperature:0.7}})
+    });
+    if(!r.ok) return null;
+    const d=await r.json();
+    return d?.candidates?.[0]?.content?.parts?.[0]?.text||null;
+  }catch(e){return null;}
+}
+
+// ══════════════════════════════════════════════════
 //  SESSION START
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 async function startSession(){
   showLoad('Loading AI Pose Model…');
   if(mode==='tmt') sessionExs=[...EX.tmt];
@@ -569,16 +692,17 @@ async function startSession(){
   exIdx=0; curEx=sessionExs[0];
   document.getElementById('landing').style.display='none';
   document.getElementById('trainer').style.display='flex';
-  setHeader(); setGuide();
+  setHeader(); setGuide(); setCalibHint();
   if(mode==='tmt') document.getElementById('tmt-strip').classList.add('show');
+  if(aiOn) document.getElementById('ai-btn').classList.add('on');
   resetState();
   try{
     await initPose();
     await initCam();
     hideLoad();
     phase='calibrating';
-    setStatusBar('s-none','Not Detected');
-    speakSafe('Please stand back so your full body is visible in the camera.');
+    setSB('s-none','Not Detected');
+    speakSafe(curEx.startHint||'Step back so your full body is visible.');
   }catch(e){
     hideLoad();
     document.getElementById('cam-msg').textContent='Camera access denied — please allow and reload.';
@@ -587,30 +711,39 @@ async function startSession(){
 }
 
 function setHeader(){
-  const icons={yoga:'🙏',exercise:'💪',cardio:'🏃',tmt:'❤️'};
-  const names={yoga:'Yoga & Asanas',exercise:'Exercise Session',cardio:'Cardio Training',tmt:'TMT Endurance Test'};
-  document.getElementById('t-icon').textContent=icons[mode];
-  document.getElementById('t-title').textContent=names[mode];
+  const icons={yoga:'🙏',exercise:'💪',cardio:'🏃',arthritis:'🦵',weightloss:'🔥',tmt:'❤️'};
+  const names={yoga:'Yoga & Asanas',exercise:'Exercise',cardio:'Cardio',arthritis:'Arthritis Care',weightloss:'Weight Loss',tmt:'TMT Endurance Test'};
+  document.getElementById('t-icon').textContent=icons[mode]||'🏋️';
+  document.getElementById('t-title-txt').textContent=(curEx?curEx.name:(names[mode]||'Session'));
 }
 
 function setGuide(){
   if(!curEx) return;
   document.getElementById('guide-title').textContent=curEx.icon+' '+curEx.name;
-  document.getElementById('guide-cues').innerHTML=curEx.cues.map(c=>`<div class="cue-chip">${c}</div>`).join('');
+  document.getElementById('guide-cues').innerHTML=(curEx.cues||[]).map(c=>`<div class="cue-chip">${c}</div>`).join('');
 }
 
-// ═══════════════════════════════════════════════════════
-//  MEDIAPIPE INIT
-// ═══════════════════════════════════════════════════════
+function setCalibHint(){
+  if(!curEx) return;
+  const hint=document.getElementById('calib-ex-hint');
+  hint.textContent=curEx.startHint||'';
+  // Update check label for pose
+  const poseLbl=document.getElementById('chk-pose-txt');
+  if(curEx.calibCheck===null){
+    poseLbl.textContent='Get into starting position on the floor/chair';
+    document.getElementById('chk-body-txt').textContent='Body visible in camera';
+  } else {
+    poseLbl.textContent=curEx.checkHint||'In correct starting position';
+    document.getElementById('chk-body-txt').textContent='Full body visible (head to ankles)';
+  }
+}
+
+// ══════════════════════════════════════════════════
+//  POSE MODEL INIT
+// ══════════════════════════════════════════════════
 async function initPose(){
   poseModel=new Pose({locateFile:f=>`https://cdn.jsdelivr.net/npm/@mediapipe/pose/${f}`});
-  poseModel.setOptions({
-    modelComplexity:1,
-    smoothLandmarks:true,
-    enableSegmentation:false,
-    minDetectionConfidence:0.55,
-    minTrackingConfidence:0.55
-  });
+  poseModel.setOptions({modelComplexity:1,smoothLandmarks:true,enableSegmentation:false,minDetectionConfidence:0.55,minTrackingConfidence:0.55});
   poseModel.onResults(onResults);
   await poseModel.initialize();
 }
@@ -619,22 +752,15 @@ async function initCam(){
   const vid=document.getElementById('videoElement');
   const mob=/Mobi|Android/i.test(navigator.userAgent);
   mStream=await navigator.mediaDevices.getUserMedia({
-    video:{facingMode:'user',width:{ideal:mob?720:1280},height:{ideal:mob?1280:720}},
-    audio:false
+    video:{facingMode:'user',width:{ideal:mob?720:1280},height:{ideal:mob?1280:720}},audio:false
   });
   vid.srcObject=mStream;
   await new Promise(r=>vid.onloadedmetadata=r);
   await vid.play();
   resizeCvs();
   cam=new Camera(vid,{
-    onFrame:async()=>{
-      if(phase!=='idle'&&phase!=='done'){
-        trackFPS();
-        await poseModel.send({image:vid});
-      }
-    },
-    width:mob?720:1280,
-    height:mob?1280:720
+    onFrame:async()=>{if(phase!=='idle'&&phase!=='done'){trackFPS();await poseModel.send({image:vid});}},
+    width:mob?720:1280,height:mob?1280:720
   });
   await cam.start();
   document.getElementById('cam-init').style.display='none';
@@ -642,546 +768,490 @@ async function initCam(){
 
 function resizeCvs(){
   const c=document.getElementById('poseCanvas'),p=c.parentElement;
-  c.width=p.clientWidth; c.height=p.clientHeight;
+  c.width=p.clientWidth;c.height=p.clientHeight;
 }
 window.addEventListener('resize',resizeCvs);
 window.addEventListener('orientationchange',()=>setTimeout(resizeCvs,250));
 
-// ═══════════════════════════════════════════════════════
-//  FPS TRACKING
-// ═══════════════════════════════════════════════════════
 function trackFPS(){
-  fpsFrames++;
+  fpsF++;
   const now=Date.now();
   if(now-fpsLast>=1000){
-    currentFPS=fpsFrames;
-    fpsFrames=0;
-    fpsLast=now;
-    document.getElementById('fps-badge').textContent=currentFPS+' FPS';
-    // FPS guard: if below 12, reduce model load
-    if(currentFPS<12&&poseModel){
-      // Already running at lowest complexity; just log
-    }
+    document.getElementById('fps-badge').textContent=fpsF+' fps';
+    fpsF=0;fpsLast=now;
   }
 }
 
-// ═══════════════════════════════════════════════════════
-//  EMA LANDMARK SMOOTHING
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+//  EMA SMOOTHING
+// ══════════════════════════════════════════════════
 function smoothLandmarks(raw){
   if(!raw) return null;
-  if(!smoothLm){
-    // First frame: clone
-    smoothLm=raw.map(p=>({x:p.x,y:p.y,z:p.z||0,visibility:p.visibility}));
-    return smoothLm;
-  }
+  if(!smoothLm){smoothLm=raw.map(p=>({...p}));return smoothLm;}
   for(let i=0;i<raw.length;i++){
-    const a=EMA_ALPHA;
-    smoothLm[i].x=a*raw[i].x+(1-a)*smoothLm[i].x;
-    smoothLm[i].y=a*raw[i].y+(1-a)*smoothLm[i].y;
-    smoothLm[i].z=a*(raw[i].z||0)+(1-a)*smoothLm[i].z;
-    smoothLm[i].visibility=a*raw[i].visibility+(1-a)*smoothLm[i].visibility;
+    smoothLm[i].x=EMA*raw[i].x+(1-EMA)*smoothLm[i].x;
+    smoothLm[i].y=EMA*raw[i].y+(1-EMA)*smoothLm[i].y;
+    smoothLm[i].visibility=EMA*raw[i].visibility+(1-EMA)*smoothLm[i].visibility;
   }
   return smoothLm;
 }
 
-// ═══════════════════════════════════════════════════════
-//  STATE TRANSITION LOCK
-// ═══════════════════════════════════════════════════════
-function stateTransitionLock(ms=600){stateLockedUntil=Date.now()+ms;}
-function isStateLocked(){return Date.now()<stateLockedUntil;}
-
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 //  VOICE ENGINE
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 function speakSafe(text,priority=false){
-  if(!voiceEnabled) return;
+  if(!voiceOn||!text) return;
   const now=Date.now();
-  if(!priority&&(now<voiceCooldownUntil||text===voiceLastMsg)) return;
-  voiceLastMsg=text;
-  voiceCooldownUntil=now+2200; // 2.2s global cooldown
+  if(!priority&&(now<voiceCoolUntil||text===voiceLastMsg)) return;
+  voiceLastMsg=text;voiceCoolUntil=now+2500;
   if(window.speechSynthesis){
     window.speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(text);
-    u.rate=1.05; u.pitch=1.0; u.volume=0.9;
-    // Prefer a natural voice if available
-    const voices=window.speechSynthesis.getVoices();
-    const pref=voices.find(v=>/en(-|_)(IN|GB|US)/i.test(v.lang)&&!v.name.includes('Google'));
+    u.rate=1.05;u.pitch=1.0;u.volume=0.9;
+    const vs=window.speechSynthesis.getVoices();
+    const pref=vs.find(v=>/en(-|_)(IN|GB|US)/i.test(v.lang)&&!v.name.includes('Google'));
     if(pref) u.voice=pref;
     window.speechSynthesis.speak(u);
-    voiceCooldownUntil=Date.now()+Math.max(2200,text.length*80);
+    voiceCoolUntil=Date.now()+Math.max(2500,text.length*75);
   }
 }
-
 function toggleVoice(){
-  voiceEnabled=!voiceEnabled;
-  const btn=document.getElementById('voice-btn');
-  if(voiceEnabled){
-    btn.textContent='🔊 Voice';
-    btn.classList.remove('muted');
-    if(window.speechSynthesis) window.speechSynthesis.cancel();
-  } else {
-    btn.textContent='🔇 Muted';
-    btn.classList.add('muted');
-    if(window.speechSynthesis) window.speechSynthesis.cancel();
-  }
+  voiceOn=!voiceOn;
+  const b=document.getElementById('voice-btn');
+  b.textContent=voiceOn?'🔊':'🔇';
+  b.className='hbtn hbtn-voice'+(voiceOn?'':' muted');
+  if(!voiceOn&&window.speechSynthesis)window.speechSynthesis.cancel();
+}
+function toggleAI(){
+  aiOn=!aiOn;
+  document.getElementById('ai-btn').classList.toggle('on',aiOn);
+  document.getElementById('ai-bubble').classList.toggle('show',aiOn);
+  if(!aiOn){document.getElementById('ai-insight-strip').classList.remove('show');}
 }
 
-// ═══════════════════════════════════════════════════════
-//  POSE RESULTS — MAIN LOOP
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+//  MAIN RESULTS LOOP
+// ══════════════════════════════════════════════════
 const CONN=[[11,12],[11,13],[13,15],[12,14],[14,16],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28],[27,29],[29,31],[28,30],[30,32],[0,1],[1,2],[2,3],[3,7],[0,4],[4,5],[5,6],[6,8]];
 
 function onResults(res){
   const cvs=document.getElementById('poseCanvas');
   const ctx=cvs.getContext('2d');
   ctx.clearRect(0,0,cvs.width,cvs.height);
-
   if(phase==='idle'||phase==='done') return;
 
-  // No body detected
   if(!res.poseLandmarks){
     smoothLm=null;
     if(phase==='calibrating'||phase==='ready') runCalib(null);
-    else if(phase==='active'||phase==='paused'){
-      setFB('neutral','👀','Move back into camera view');
-      speakSafe('Body not detected. Please step back into view.',true);
-    }
-    // Draw ghost silhouette always
-    drawGhostSkeleton(ctx,cvs.width,cvs.height);
+    else if(phase==='active'){setFB('neutral','👀','Move into camera view');speakSafe('Body not detected. Step back into view.',true);}
+    drawGhost(ctx,cvs.width,cvs.height);
     return;
   }
 
-  // Smooth landmarks
   const lm=smoothLandmarks(res.poseLandmarks);
 
-  // Draw ghost silhouette during calibration
   if(phase==='calibrating'||phase==='ready'||phase==='countdown'){
-    drawGhostSkeleton(ctx,cvs.width,cvs.height);
-    drawBoundingBox(ctx,lm,cvs.width,cvs.height,phase==='ready'||phase==='countdown');
+    drawGhost(ctx,cvs.width,cvs.height);
+    drawBBox(ctx,lm,cvs.width,cvs.height,phase==='ready'||phase==='countdown');
+    drawTargetPose(ctx,lm,cvs.width,cvs.height);
     drawSkel(ctx,lm,false,[]);
     runCalib(lm);
     return;
   }
-
   if(phase==='paused') return;
-  if(phase==='countdown') return;
 
-  // ACTIVE PHASE
+  // ── ACTIVE ──
   totalF++;
+
+  // Motion detection — only score/rep-count if user is moving
+  const movementDetected=checkMotion(lm);
 
   const {ok,msg,errs}=curEx.check(lm);
 
-  // Analytics for AI insight
-  if(ok){
-    correctF++;
-    curStreak++;
-    if(curStreak>maxStreak) maxStreak=curStreak;
-    handleOk();
+  if(movementDetected||curEx.type==='hold'){
+    if(ok){correctF++;curStreak++;if(curStreak>maxStreak)maxStreak=curStreak;handleOk();}
+    else{curStreak=0;handleBad();}
+    const fbType=ok?'correct':'incorrect';
+    if(fbType!==lastFBType||msg!==lastFBText){
+      lastFBType=fbType;lastFBText=msg;
+      setFB(ok?'correct':'incorrect',ok?'✅':'⚠️',msg);
+      if(!ok&&msg) speakSafe(msg);
+      else if(ok&&curStreak%5===0) speakSafe('Good form! Keep going.');
+    }
   } else {
-    curStreak=0;
-    handleBad();
+    // Motion stopped during rep exercise
+    motionStoppedFrames++;
+    if(motionStoppedFrames>MOTION_STOP_THRESHOLD){
+      document.getElementById('motion-warn').classList.add('show');
+      speakSafe('Keep moving — resume your exercise!');
+    }
   }
 
-  // Feedback with voice
-  const fbType=ok?'correct':'incorrect';
-  if(fbType!==lastFeedbackType){
-    lastFeedbackType=fbType;
-    if(ok) speakSafe('Good form! Keep it up.');
-    else if(msg&&msg.length>0) speakSafe(msg);
+  if(movementDetected&&motionStoppedFrames>0){
+    motionStoppedFrames=0;
+    document.getElementById('motion-warn').classList.remove('show');
   }
-  setFB(ok?'correct':'incorrect',ok?'✅':'⚠️',msg);
-
-  drawBoundingBox(ctx,lm,cvs.width,cvs.height,ok);
-  drawSkel(ctx,lm,ok,errs);
-  updateScore();
-  updateFormHUD(ok);
-  updateProgArc();
 
   // Center guidance
-  detectAndShowCenterOffset(lm,cvs.width,cvs.height);
+  const off=detectOffset(lm);
+  const arrow=document.getElementById('dir-arrow');
+  if(off==='left'){arrow.textContent='➡';arrow.classList.add('show');speakSafe('Move right.');}
+  else if(off==='right'){arrow.textContent='⬅';arrow.classList.add('show');speakSafe('Move left.');}
+  else arrow.classList.remove('show');
+
+  drawBBox(ctx,lm,cvs.width,cvs.height,ok);
+  drawTargetPose(ctx,lm,cvs.width,cvs.height);
+  drawSkel(ctx,lm,ok,errs);
+  updateScore();
+  updateFormHUD();
+  updateProgArc();
+
+  // AI insight throttle: call Gemini every 20s during active
+  if(aiOn&&geminiConnected&&Date.now()>aiCoolUntil){
+    aiCoolUntil=Date.now()+20000;
+    getAIInsight();
+  }
 }
 
-// ═══════════════════════════════════════════════════════
-//  CALIBRATION — upgraded with auto-start
-// ═══════════════════════════════════════════════════════
-function runCalib(lm){
-  if(isStateLocked()) return;
+// ══════════════════════════════════════════════════
+//  MOTION DETECTION
+// ══════════════════════════════════════════════════
+function checkMotion(lm){
+  if(!lm[23]||!lm[24]) return true; // assume moving if can't measure
+  const mx=(lm[23].x+lm[24].x)/2,my=(lm[23].y+lm[24].y)/2;
+  motionHistory.push({x:mx,y:my});
+  if(motionHistory.length>8) motionHistory.shift();
+  if(motionHistory.length<4) return true;
+  const dx=motionHistory[motionHistory.length-1].x-motionHistory[0].x;
+  const dy=motionHistory[motionHistory.length-1].y-motionHistory[0].y;
+  return Math.abs(dx)+Math.abs(dy)>MOTION_SENSITIVITY;
+}
 
-  let bodyOk=false,standOk=false;
+// ══════════════════════════════════════════════════
+//  CALIBRATION — upgraded per-exercise awareness
+// ══════════════════════════════════════════════════
+function calibStand(lm){
+  // Standard standing check
+  if(!lm) return false;
+  const hipY=(lm[23].y+lm[24].y)/2;
+  const shoulderY=(lm[11].y+lm[12].y)/2;
+  const ankleY=(lm[27].y+lm[28].y)/2;
+  return shoulderY<hipY&&hipY<ankleY&&(ankleY-shoulderY)>0.28;
+}
+
+function runCalib(lm){
+  if(Date.now()<stateLockUntil) return;
+  let bodyOk=false,poseOk=false;
   if(lm){
     const keys=[0,11,12,23,24,25,26,27,28];
-    bodyOk=keys.every(i=>lm[i]&&lm[i].visibility>0.5);
+    bodyOk=keys.every(i=>lm[i]&&lm[i].visibility>0.48);
+    // Pose-specific starting position check
     if(bodyOk){
-      const hipY=(lm[23].y+lm[24].y)/2;
-      const shoulderY=(lm[11].y+lm[12].y)/2;
-      const ankleY=(lm[27].y+lm[28].y)/2;
-      standOk=shoulderY<hipY&&hipY<ankleY&&(ankleY-shoulderY)>0.28;
-    }
-    if(bodyOk&&standOk){
-      if(lmSnap){
-        const d=motionDelta(lm,lmSnap);
-        if(d<0.009) calibStill++;
-        else calibStill=Math.max(0,calibStill-2);
+      if(curEx.calibCheck===null){
+        poseOk=true; // floor exercises — just need any body visibility
+      } else if(typeof curEx.calibCheck==='function'){
+        poseOk=curEx.calibCheck(lm);
+      } else {
+        poseOk=calibStand(lm);
       }
-      lmSnap=lm;
-    } else {
-      calibStill=0; lmSnap=null;
     }
-  } else {
-    calibStill=0; lmSnap=null;
-  }
+    if(bodyOk&&poseOk){
+      if(lmSnap){const d=mDelta(lm,lmSnap);if(d<0.009)calibStill++;else calibStill=Math.max(0,calibStill-2);}
+      lmSnap=lm;
+    } else {calibStill=0;lmSnap=null;}
+  } else {calibStill=0;lmSnap=null;}
 
   const stillOk=calibStill>=22;
   setChk('chk-body',bodyOk);
-  setChk('chk-stand',standOk);
+  setChk('chk-pose',poseOk);
   setChk('chk-still',stillOk);
 
-  // Zoom / center voice guidance during calibration
+  // Voice guidance during calibration
   if(lm&&bodyOk){
-    const zoom=detectZoomLevel(lm);
-    const offset=detectCenterOffset(lm);
-    if(zoom==='close')      speakSafe('Step back a little.');
-    else if(zoom==='far')   speakSafe('Step closer to the camera.');
-    else if(offset==='left') speakSafe('Move slightly to the right.');
-    else if(offset==='right')speakSafe('Move slightly to the left.');
-    else if(!stillOk)       speakSafe('Hold still.');
-  } else if(!bodyOk){
-    speakSafe('Step back so your full body is visible.');
-  }
+    const zm=detectZoom(lm);
+    const off=detectOffset(lm);
+    if(zm==='close') speakSafe('Step back a little.');
+    else if(zm==='far') speakSafe('Step closer to the camera.');
+    else if(off==='left') speakSafe('Move to the right.');
+    else if(off==='right') speakSafe('Move to the left.');
+    else if(!poseOk) speakSafe(curEx.checkHint||'Get into starting position.');
+    else if(!stillOk) speakSafe('Hold still.');
+  } else if(!bodyOk) speakSafe('Step back so your full body is visible.');
 
-  if(bodyOk&&standOk&&stillOk){
+  if(bodyOk&&poseOk&&stillOk){
     if(phase==='calibrating'){
-      stateTransitionLock(400);
+      stateLockUntil=Date.now()+400;
       phase='ready';
       document.getElementById('calib-icon').textContent='✅';
-      document.getElementById('calib-title').textContent='Perfect Position!';
-      document.getElementById('calib-sub').textContent='Starting in 3 seconds…';
-      setStatusBar('s-ready','Ready');
-      setFB('correct','✅','Perfect — starting automatically!');
+      document.getElementById('calib-title').textContent='Perfect! Starting…';
+      document.getElementById('calib-sub').textContent='Hold this position.';
+      setSB('s-ready','Ready');
+      setFB('correct','✅','Perfect position — starting in 3…');
       speakSafe('Perfect. Starting in 3.',true);
       startCountdown();
     }
   } else {
     if(phase==='ready'){
-      stateTransitionLock(400);
+      stateLockUntil=Date.now()+400;
       phase='calibrating';
       clearCountdown();
       document.getElementById('calib-icon').textContent='🧍';
-      document.getElementById('calib-title').textContent='Position Your Body';
-      document.getElementById('calib-sub').textContent='Stand back so your full body — head to ankles — is visible.';
+      document.getElementById('calib-title').textContent='Position Yourself';
+      document.getElementById('calib-sub').textContent=curEx.startHint||'Get into starting position.';
       document.getElementById('cd-wrap').style.display='none';
-      setStatusBar('s-cal','Calibrating');
+      setSB('s-cal','Calibrating');
     }
     if(!bodyOk) setFB('neutral','📐','Step back — full body not visible');
-    else if(!standOk) setFB('neutral','📐','Stand upright, face the camera');
-    else setFB('neutral','⏱️','Hold still…');
+    else if(!poseOk) setFB('neutral','🧘',curEx.checkHint||'Get into starting position');
+    else setFB('neutral','⏱️','Hold still 2 seconds…');
   }
 }
 
-// ═══════════════════════════════════════════════════════
-//  AUTO-COUNTDOWN (replaces manual button)
-// ═══════════════════════════════════════════════════════
-function startCountdown(){
-  if(cdInterval) clearInterval(cdInterval);
-  cdCount=3;
-  document.getElementById('cd-wrap').style.display='flex';
-  updateCDRing(3);
-  cdInterval=setInterval(()=>{
-    cdCount--;
-    if(cdCount<=0){
-      clearCountdown();
-      beginExercise();
-    } else {
-      updateCDRing(cdCount);
-      speakSafe(String(cdCount),true);
-    }
-  },1000);
-}
-
-function clearCountdown(){
-  if(cdInterval){clearInterval(cdInterval);cdInterval=null;}
-  document.getElementById('cd-wrap').style.display='none';
-}
-
-function updateCDRing(n){
-  document.getElementById('cd-num').textContent=n;
-  // Fill arc proportional to n/3
-  const circ=188.5;
-  const offset=circ*(1-n/3);
-  document.getElementById('cd-arc').style.strokeDashoffset=offset;
-}
-
-function beginExercise(){
-  if(phase!=='ready'&&phase!=='countdown') return;
-  document.getElementById('calib-overlay').classList.add('hidden');
-  phase='active';
-  startTimer();
-  setStatusBar('s-active','Tracking Active');
-  setFB('neutral','🏁',curEx.icon+' '+curEx.name+' — Begin!');
-  speakSafe('Go! ' + curEx.name + ' starting now.',true);
-}
-
-// ═══════════════════════════════════════════════════════
-//  ZOOM & CENTER DETECTION
-// ═══════════════════════════════════════════════════════
-function detectZoomLevel(lm){
-  if(!lm) return 'ok';
-  const shoulderY=(lm[11].y+lm[12].y)/2;
-  const ankleY=(lm[27].y+lm[28].y)/2;
-  const bodyH=ankleY-shoulderY; // fraction of frame height
-  if(bodyH>0.88) return 'close';
-  if(bodyH<0.38) return 'far';
-  return 'ok';
-}
-
-function detectCenterOffset(lm){
-  if(!lm) return 'ok';
-  const midX=(lm[11].x+lm[12].x+lm[23].x+lm[24].x)/4;
-  if(midX<0.35) return 'left';  // body is left of centre → tell to move right
-  if(midX>0.65) return 'right';
-  return 'ok';
-}
-
-function detectAndShowCenterOffset(lm,w,h){
-  const offset=detectCenterOffset(lm);
-  const arrow=document.getElementById('dir-arrow');
-  if(offset==='left'){
-    arrow.textContent='➡';arrow.classList.add('show');
-    speakSafe('Move right.');
-  } else if(offset==='right'){
-    arrow.textContent='⬅';arrow.classList.add('show');
-    speakSafe('Move left.');
-  } else {
-    arrow.classList.remove('show');
-  }
-}
-
-// ═══════════════════════════════════════════════════════
-//  DRAWING — BOUNDING BOX
-// ═══════════════════════════════════════════════════════
-function drawBoundingBox(ctx,lm,w,h,isGood){
-  // Compute bounding box of visible body keypoints
-  let minX=1,maxX=0,minY=1,maxY=0;
-  const keys=[0,11,12,13,14,15,16,23,24,25,26,27,28];
-  let count=0;
-  keys.forEach(i=>{
-    if(lm[i]&&lm[i].visibility>0.4){
-      minX=Math.min(minX,lm[i].x);maxX=Math.max(maxX,lm[i].x);
-      minY=Math.min(minY,lm[i].y);maxY=Math.max(maxY,lm[i].y);
-      count++;
-    }
-  });
-  if(count<4) return;
-
-  // Add padding
-  const pad=0.04;
-  const bx=(minX-pad)*w,by=(minY-pad)*h;
-  const bw=(maxX-minX+2*pad)*w,bh=(maxY-minY+2*pad)*h;
-
-  // Colour based on state
-  const zoom=detectZoomLevel(lm);
-  let col=isGood?'rgba(0,255,136,0.55)':'rgba(255,210,63,0.55)';
-  if(zoom==='close') col='rgba(255,59,107,0.55)';
-
-  ctx.save();
-  ctx.strokeStyle=col;
-  ctx.lineWidth=2.5;
-  ctx.setLineDash([10,6]);
-  ctx.shadowColor=col;ctx.shadowBlur=12;
-  // Draw rounded rect via bezier
-  const r=14;
-  ctx.beginPath();
-  ctx.moveTo(bx+r,by);ctx.lineTo(bx+bw-r,by);ctx.quadraticCurveTo(bx+bw,by,bx+bw,by+r);
-  ctx.lineTo(bx+bw,by+bh-r);ctx.quadraticCurveTo(bx+bw,by+bh,bx+bw-r,by+bh);
-  ctx.lineTo(bx+r,by+bh);ctx.quadraticCurveTo(bx,by+bh,bx,by+bh-r);
-  ctx.lineTo(bx,by+r);ctx.quadraticCurveTo(bx,by,bx+r,by);
-  ctx.closePath();
-  ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.shadowBlur=0;
-  ctx.restore();
-}
-
-// ═══════════════════════════════════════════════════════
-//  DRAWING — GHOST SILHOUETTE
-// ═══════════════════════════════════════════════════════
-// Normalised reference pose (T-pose proportions, centred)
-const GHOST_PTS={
-  0:{x:.5,y:.08},         // nose
-  11:{x:.42,y:.28},12:{x:.58,y:.28}, // shoulders
-  13:{x:.35,y:.42},14:{x:.65,y:.42}, // elbows
-  15:{x:.30,y:.55},16:{x:.70,y:.55}, // wrists
-  23:{x:.44,y:.52},24:{x:.56,y:.52}, // hips
-  25:{x:.43,y:.70},26:{x:.57,y:.70}, // knees
-  27:{x:.43,y:.88},28:{x:.57,y:.88}, // ankles
-};
-const GHOST_CONN=[[0,11],[0,12],[11,12],[11,13],[13,15],[12,14],[14,16],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28]];
-
-function drawGhostSkeleton(ctx,w,h){
-  ctx.save();
-  ctx.globalAlpha=0.13;
-  ctx.strokeStyle='#00E5FF';
-  ctx.fillStyle='#00E5FF';
-  ctx.lineWidth=2;
-  GHOST_CONN.forEach(([a,b])=>{
-    const A=GHOST_PTS[a],B=GHOST_PTS[b];
-    if(!A||!B) return;
-    ctx.beginPath();ctx.moveTo(A.x*w,A.y*h);ctx.lineTo(B.x*w,B.y*h);ctx.stroke();
-  });
-  Object.values(GHOST_PTS).forEach(p=>{
-    ctx.beginPath();ctx.arc(p.x*w,p.y*h,4,0,Math.PI*2);ctx.fill();
-  });
-  // Head circle
-  ctx.beginPath();ctx.arc(.5*w,.08*h,18,0,Math.PI*2);ctx.stroke();
-  ctx.restore();
-}
-
-// ═══════════════════════════════════════════════════════
-//  DRAWING — SKELETON
-// ═══════════════════════════════════════════════════════
-function drawSkel(ctx,lm,ok,errs=[]){
-  const w=ctx.canvas.width,h=ctx.canvas.height;
-  const p=i=>({x:lm[i].x*w,y:lm[i].y*h,v:lm[i].visibility});
-
-  // Centre guide line
-  ctx.save();
-  ctx.setLineDash([5,9]);
-  ctx.beginPath();ctx.moveTo(w/2,0);ctx.lineTo(w/2,h);
-  ctx.strokeStyle='rgba(123,97,255,0.15)';ctx.lineWidth=1.5;ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.restore();
-
-  // Connections
-  CONN.forEach(([a,b])=>{
-    const A=p(a),B=p(b);
-    if(A.v<0.35||B.v<0.35) return;
-    const isE=errs.includes(a)||errs.includes(b);
-    const col=isE?'#FF3B6B':(ok?'#00FF88':'#FFD23F');
-    ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);
-    ctx.strokeStyle=col;ctx.lineWidth=3.5;
-    ctx.shadowColor=col;ctx.shadowBlur=9;ctx.stroke();ctx.shadowBlur=0;
-  });
-
-  // Joints
-  for(let i=0;i<lm.length;i++){
-    const pt=p(i);if(pt.v<0.35) continue;
-    const isE=errs.includes(i);
-    const col=isE?'#FF3B6B':(ok?'#00FF88':'#FFD23F');
-    const r=i>=11&&i<=28?6:3.5;
-    ctx.beginPath();ctx.arc(pt.x,pt.y,r,0,Math.PI*2);
-    ctx.fillStyle=col;ctx.shadowColor=col;ctx.shadowBlur=11;ctx.fill();ctx.shadowBlur=0;
-  }
-}
-
-// ═══════════════════════════════════════════════════════
-//  STATUS BAR
-// ═══════════════════════════════════════════════════════
-function setStatusBar(cls,text){
-  const el=document.getElementById('status-bar');
-  el.className='status-bar '+cls;
-  document.getElementById('status-txt').textContent=text;
-}
-
-// ═══════════════════════════════════════════════════════
-//  FORM SCORE HUD
-// ═══════════════════════════════════════════════════════
-function updateFormHUD(ok){
-  const acc=totalF>0?correctF/totalF:0;
-  const pct=Math.round(acc*100);
-  const el=document.getElementById('form-score-val');
-  el.textContent=pct+'%';
-  if(pct>=75) el.style.color='var(--green)';
-  else if(pct>=50) el.style.color='var(--yellow)';
-  else el.style.color='var(--red)';
-}
-
-// ═══════════════════════════════════════════════════════
-//  PROGRESS ARC (rep or hold progress)
-// ═══════════════════════════════════════════════════════
-function updateProgArc(){
-  let progress=0,val='',sub='';
-  if(curEx.type==='hold'){
-    progress=Math.min(1,holdAcc/(curEx.targetHold||20));
-    val=holdAcc.toFixed(0)+'s';sub='hold';
-  } else {
-    progress=Math.min(1,reps/(curEx.targetReps||10));
-    val=reps;sub='reps';
-  }
-  const circ=138.2;
-  document.getElementById('prog-ring').style.strokeDashoffset=circ-(progress*circ);
-  document.getElementById('prog-val').textContent=val;
-  document.getElementById('prog-sub').textContent=sub;
-}
-
-// ═══════════════════════════════════════════════════════
-//  AI INSIGHT ENGINE
-// ═══════════════════════════════════════════════════════
-function updateAIInsight(){
-  const acc=totalF>0?Math.round((correctF/totalF)*100):0;
-  let insight='';
-  if(totalF<20){insight='Keep going — collecting movement data…';}
-  else if(acc<40){insight='Focus on form over speed. Slow down and hold each position.';}
-  else if(acc<65){insight='Your form is improving! Try to maintain each position a beat longer.';}
-  else if(curStreak>10){insight='Excellent streak! Your consistency is a key strength.';}
-  else if(maxStreak<5&&reps>10){insight='Work on holding correct positions. Shorter reps with better form beats volume.';}
-  else if(acc>=80){insight='Outstanding form. Challenge yourself with the next difficulty level.';}
-  else{insight='Solid session. Maintain this rhythm and focus on breathing.';}
-  document.getElementById('ai-insight').textContent='🧠 '+insight;
-  return insight;
-}
-
-// ═══════════════════════════════════════════════════════
-//  CALIBRATION HELPERS
-// ═══════════════════════════════════════════════════════
-function setChk(id,ok){document.getElementById(id).className='cr'+(ok?' ok':'');}
-function motionDelta(a,b){
+function setChk(id,ok){const el=document.getElementById(id);if(el)el.className='cr'+(ok?' ok':'');}
+function mDelta(a,b){
   const pts=[0,11,12,23,24,27,28];let s=0;
   pts.forEach(i=>{if(a[i]&&b[i])s+=Math.abs(a[i].x-b[i].x)+Math.abs(a[i].y-b[i].y);});
   return s/pts.length;
 }
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+//  AUTO COUNTDOWN
+// ══════════════════════════════════════════════════
+function startCountdown(){
+  if(cdTimer) clearInterval(cdTimer);
+  cdN=3;document.getElementById('cd-wrap').style.display='flex';updateCDArc(3);
+  cdTimer=setInterval(()=>{
+    cdN--;
+    if(cdN<=0){clearCountdown();beginExercise();}
+    else{updateCDArc(cdN);speakSafe(String(cdN),true);}
+  },1000);
+}
+function clearCountdown(){if(cdTimer){clearInterval(cdTimer);cdTimer=null;}document.getElementById('cd-wrap').style.display='none';}
+function updateCDArc(n){
+  document.getElementById('cd-num').textContent=n;
+  document.getElementById('cd-arc').style.strokeDashoffset=175.9*(1-n/3);
+}
+function beginExercise(){
+  if(phase!=='ready'&&phase!=='countdown') return;
+  document.getElementById('calib-overlay').classList.add('hidden');
+  phase='active';startTimer();
+  setSB('s-active','Tracking Active');
+  setFB('neutral','🏁',curEx.icon+' '+curEx.name);
+  speakSafe('Go! '+curEx.name+'.',true);
+  if(aiOn&&geminiConnected) getAIInsight();
+  if(aiOn&&geminiConnected) aiInsightInterval=setInterval(getAIInsight,20000);
+}
+
+// ══════════════════════════════════════════════════
+//  DRAWING — GHOST SILHOUETTE
+// ══════════════════════════════════════════════════
+const DEF_GHOST={11:[.42,.28],12:[.58,.28],13:[.35,.40],14:[.65,.40],15:[.30,.52],16:[.70,.52],23:[.44,.52],24:[.56,.52],25:[.43,.70],26:[.57,.70],27:[.43,.88],28:[.57,.88]};
+const GHOST_CONN=[[11,12],[11,13],[13,15],[12,14],[14,16],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28]];
+
+function drawGhost(ctx,w,h){
+  const pts=curEx?.ghost||DEF_GHOST;
+  ctx.save();ctx.globalAlpha=0.11;ctx.strokeStyle='#00E5FF';ctx.fillStyle='#00E5FF';ctx.lineWidth=2;
+  GHOST_CONN.forEach(([a,b])=>{
+    const A=pts[a],B=pts[b];if(!A||!B)return;
+    ctx.beginPath();ctx.moveTo(A[0]*w,A[1]*h);ctx.lineTo(B[0]*w,B[1]*h);ctx.stroke();
+  });
+  Object.values(pts).forEach(p=>{ctx.beginPath();ctx.arc(p[0]*w,p[1]*h,4,0,Math.PI*2);ctx.fill();});
+  // Head
+  ctx.beginPath();ctx.arc(.5*w,.08*h,16,0,Math.PI*2);ctx.stroke();
+  ctx.restore();
+}
+
+// ══════════════════════════════════════════════════
+//  DRAWING — TARGET POSE OVERLAY (red dotted frame → green when aligned)
+// ══════════════════════════════════════════════════
+function drawTargetPose(ctx,lm,w,h){
+  const ghost=curEx?.ghost||DEF_GHOST;
+  if(!ghost||!lm) return;
+
+  // Calculate how well user aligns to ghost (average distance)
+  let totalDiff=0,count=0;
+  GHOST_CONN.forEach(([a,b])=>{
+    if(ghost[a]&&ghost[b]&&lm[a]&&lm[b]&&lm[a].visibility>0.4&&lm[b].visibility>0.4){
+      totalDiff+=Math.abs(lm[a].x-ghost[a][0])+Math.abs(lm[a].y-ghost[a][1]);
+      totalDiff+=Math.abs(lm[b].x-ghost[b][0])+Math.abs(lm[b].y-ghost[b][1]);
+      count+=2;
+    }
+  });
+  const avgDiff=count>0?totalDiff/count:1;
+  const aligned=avgDiff<0.12; // within 12% of frame
+
+  ctx.save();
+  ctx.setLineDash([6,5]);
+  ctx.lineWidth=2;
+  const col=aligned?'rgba(0,255,136,0.7)':'rgba(255,59,107,0.55)';
+  ctx.strokeStyle=col;ctx.shadowColor=col;ctx.shadowBlur=8;
+
+  GHOST_CONN.forEach(([a,b])=>{
+    const A=ghost[a],B=ghost[b];if(!A||!B)return;
+    ctx.beginPath();ctx.moveTo(A[0]*w,A[1]*h);ctx.lineTo(B[0]*w,B[1]*h);ctx.stroke();
+  });
+  // Head circle
+  ctx.beginPath();ctx.arc(.5*w,.08*h,16,0,Math.PI*2);ctx.stroke();
+
+  ctx.setLineDash([]);ctx.shadowBlur=0;
+  ctx.restore();
+}
+
+// ══════════════════════════════════════════════════
+//  DRAWING — BOUNDING BOX
+// ══════════════════════════════════════════════════
+function drawBBox(ctx,lm,w,h,good){
+  let minX=1,maxX=0,minY=1,maxY=0,n=0;
+  [0,11,12,13,14,15,16,23,24,25,26,27,28].forEach(i=>{
+    if(lm[i]&&lm[i].visibility>0.4){
+      minX=Math.min(minX,lm[i].x);maxX=Math.max(maxX,lm[i].x);
+      minY=Math.min(minY,lm[i].y);maxY=Math.max(maxY,lm[i].y);n++;
+    }
+  });
+  if(n<4) return;
+  const pd=0.035,bx=(minX-pd)*w,by=(minY-pd)*h,bw=(maxX-minX+2*pd)*w,bh=(maxY-minY+2*pd)*h;
+  const zm=detectZoom(lm);
+  const col=zm==='close'?'rgba(255,59,107,.6)':good?'rgba(0,255,136,.55)':'rgba(255,210,63,.55)';
+  ctx.save();ctx.strokeStyle=col;ctx.lineWidth=2;ctx.setLineDash([9,5]);ctx.shadowColor=col;ctx.shadowBlur=10;
+  const r=12;
+  ctx.beginPath();
+  ctx.moveTo(bx+r,by);ctx.lineTo(bx+bw-r,by);ctx.quadraticCurveTo(bx+bw,by,bx+bw,by+r);
+  ctx.lineTo(bx+bw,by+bh-r);ctx.quadraticCurveTo(bx+bw,by+bh,bx+bw-r,by+bh);
+  ctx.lineTo(bx+r,by+bh);ctx.quadraticCurveTo(bx,by+bh,bx,by+bh-r);
+  ctx.lineTo(bx,by+r);ctx.quadraticCurveTo(bx,by,bx+r,by);
+  ctx.closePath();ctx.stroke();
+  ctx.setLineDash([]);ctx.shadowBlur=0;ctx.restore();
+}
+
+// ══════════════════════════════════════════════════
+//  DRAWING — SKELETON
+// ══════════════════════════════════════════════════
+function drawSkel(ctx,lm,ok,errs=[]){
+  const w=ctx.canvas.width,h=ctx.canvas.height;
+  const p=i=>({x:lm[i].x*w,y:lm[i].y*h,v:lm[i].visibility});
+  // Centre guide
+  ctx.save();ctx.setLineDash([5,9]);ctx.beginPath();ctx.moveTo(w/2,0);ctx.lineTo(w/2,h);
+  ctx.strokeStyle='rgba(123,97,255,0.13)';ctx.lineWidth=1.5;ctx.stroke();ctx.setLineDash([]);ctx.restore();
+  // Connections
+  CONN.forEach(([a,b])=>{
+    const A=p(a),B=p(b);if(A.v<0.35||B.v<0.35)return;
+    const e=errs.includes(a)||errs.includes(b);
+    const c=e?'#FF3B6B':ok?'#00FF88':'#FFD23F';
+    ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);
+    ctx.strokeStyle=c;ctx.lineWidth=3.5;ctx.shadowColor=c;ctx.shadowBlur=8;ctx.stroke();ctx.shadowBlur=0;
+  });
+  // Joints
+  for(let i=0;i<lm.length;i++){
+    const pt=p(i);if(pt.v<0.35)continue;
+    const e=errs.includes(i);
+    const c=e?'#FF3B6B':ok?'#00FF88':'#FFD23F';
+    const r=i>=11&&i<=28?5.5:3;
+    ctx.beginPath();ctx.arc(pt.x,pt.y,r,0,Math.PI*2);
+    ctx.fillStyle=c;ctx.shadowColor=c;ctx.shadowBlur=10;ctx.fill();ctx.shadowBlur=0;
+  }
+}
+
+// ══════════════════════════════════════════════════
+//  HELPERS: ZOOM / OFFSET
+// ══════════════════════════════════════════════════
+function detectZoom(lm){
+  if(!lm||!lm[11]||!lm[27]) return 'ok';
+  const h=lm[27].y-lm[11].y;
+  if(h>0.88)return 'close';if(h<0.35)return 'far';return 'ok';
+}
+function detectOffset(lm){
+  if(!lm||!lm[11]||!lm[12]) return 'ok';
+  const mx=(lm[11].x+lm[12].x+lm[23].x+lm[24].x)/4;
+  if(mx<0.35)return 'left';if(mx>0.65)return 'right';return 'ok';
+}
+
+// ══════════════════════════════════════════════════
+//  STATUS BAR
+// ══════════════════════════════════════════════════
+function setSB(cls,text){
+  const el=document.getElementById('status-bar');
+  el.className='status-bar '+cls;
+  document.getElementById('status-txt').textContent=text;
+}
+
+// ══════════════════════════════════════════════════
+//  FORM HUD + PROGRESS ARC
+// ══════════════════════════════════════════════════
+function updateFormHUD(){
+  const acc=totalF>0?correctF/totalF:0;
+  const pct=Math.round(acc*100);
+  const el=document.getElementById('form-score-val');
+  el.textContent=pct+'%';
+  el.style.color=pct>=75?'var(--green)':pct>=50?'var(--yellow)':'var(--red)';
+}
+function updateProgArc(){
+  let prog=0,val='',sub='';
+  if(curEx.type==='hold'){
+    prog=Math.min(1,holdAcc/(curEx.targetHold||20));val=holdAcc.toFixed(0)+'s';sub='hold';
+  } else {
+    prog=Math.min(1,reps/(curEx.targetReps||10));val=String(reps);sub='reps';
+  }
+  document.getElementById('prog-ring').style.strokeDashoffset=125.7-(prog*125.7);
+  document.getElementById('prog-val').textContent=val;
+  document.getElementById('prog-sub').textContent=sub;
+}
+
+// ══════════════════════════════════════════════════
+//  GEMINI AI INSIGHT
+// ══════════════════════════════════════════════════
+async function getAIInsight(){
+  if(!geminiConnected||!aiOn||phase!=='active') return;
+  const acc=totalF>0?Math.round((correctF/totalF)*100):0;
+  const prompt=`You are an expert ${mode} fitness coach. The user is doing ${curEx.name}. Stats: ${reps} reps completed, ${acc}% form accuracy, ${elapsed}s elapsed. Give ONE very short coaching tip (max 15 words). Be specific and encouraging.`;
+  const result=await callGemini(prompt);
+  if(result){
+    const text=result.trim();
+    document.getElementById('ai-bubble-text').textContent=text;
+    document.getElementById('ai-bubble').classList.add('show');
+    document.getElementById('ai-insight-strip').textContent='✦ '+text;
+    document.getElementById('ai-insight-strip').classList.add('show');
+    speakSafe(text);
+  }
+}
+async function getAISessionSummary(){
+  if(!geminiConnected) return null;
+  const acc=totalF>0?Math.round((correctF/totalF)*100):0;
+  const prompt=`You are an expert ${mode} fitness coach. Session summary: Exercise: ${curEx.name}, Mode: ${mode}, Reps: ${reps}, Accuracy: ${acc}%, Duration: ${elapsed}s, Max streak: ${maxStreak}. Write a 2-sentence personalised post-session analysis. Include one specific improvement tip.`;
+  return await callGemini(prompt);
+}
+
+// ══════════════════════════════════════════════════
 //  ANGLE UTILITY
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 function ang(A,B,C){
   const r=Math.atan2(C.y-B.y,C.x-B.x)-Math.atan2(A.y-B.y,A.x-B.x);
   let d=Math.abs(r*180/Math.PI);if(d>180)d=360-d;return d;
 }
 function G(lm,i){return lm[i];}
 
-// ═══════════════════════════════════════════════════════
-//  REP STATE MACHINE  (unchanged logic, same API)
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+//  REP STATE MACHINE
+// ══════════════════════════════════════════════════
 function initRS(){rs={ph:'neutral',cd:0};}
-
-function repDown(angle,downT,upT){
+function repDown(a,dT,uT){
   if(rs.cd>0){rs.cd--;return false;}
-  if(rs.ph==='neutral'&&angle<=downT){rs.ph='down';return false;}
-  if(rs.ph==='down'&&angle>=upT){rs.ph='neutral';rs.cd=10;return true;}
-  return false;
-}
-function repUp(angle,upT,downT){
-  if(rs.cd>0){rs.cd--;return false;}
-  if(rs.ph==='neutral'&&angle>=upT){rs.ph='up';return false;}
-  if(rs.ph==='up'&&angle<=downT){rs.ph='neutral';rs.cd=10;return true;}
+  if(rs.ph==='neutral'&&a<=dT){rs.ph='down';return false;}
+  if(rs.ph==='down'&&a>=uT){rs.ph='neutral';rs.cd=10;return true;}
   return false;
 }
 
-// ═══════════════════════════════════════════════════════
-//  EXERCISE CHECKS  (all unchanged from original)
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+//  EXERCISE CHECKS
+// ══════════════════════════════════════════════════
 function checkTadasana(lm){
   const lS=G(lm,11),rS=G(lm,12),lH=G(lm,23),rH=G(lm,24),lAn=G(lm,27),rAn=G(lm,28);
-  if(!lS||!rS||!lH||!rH||!lAn||!rAn||lAn.visibility<0.4)
-    return{ok:false,msg:'Full body not visible — step back',errs:[]};
+  if(!lS||!rS||!lH||!rH||!lAn||!rAn||lAn.visibility<0.4) return{ok:false,msg:'Full body not visible — step back',errs:[]};
   const errs=[],msgs=[];
   if(Math.abs(lS.y-rS.y)>0.05){errs.push(11,12);msgs.push('Level your shoulders');}
   if(Math.abs(lH.y-rH.y)>0.05){errs.push(23,24);msgs.push('Level your hips');}
-  const smx=(lS.x+rS.x)/2,hmx=(lH.x+rH.x)/2;
-  if(Math.abs(smx-hmx)>0.09){errs.push(11,12,23,24);msgs.push('Don\'t lean — stand straight');}
+  if(Math.abs((lS.x+rS.x)/2-(lH.x+rH.x)/2)>0.09){errs.push(11,12,23,24);msgs.push('Stand straight — do not lean');}
   const ok=errs.length===0;
-  return{ok,msg:ok?'Perfect Tadasana — hold steady!':msgs[0],errs};
+  return{ok,msg:ok?'Perfect Tadasana — breathe and hold!':msgs[0],errs};
 }
 function checkWarrior1(lm){
   const lK=G(lm,25),lH=G(lm,23),lAn=G(lm,27),lS=G(lm,11),rS=G(lm,12),lW=G(lm,15),rW=G(lm,16);
@@ -1191,130 +1261,183 @@ function checkWarrior1(lm){
   if(kA<65||kA>115){errs.push(25,27);msgs.push('Bend front knee to 90°');}
   const armsUp=lW&&rW&&lW.y<lS.y-0.04&&rW.y<rS.y-0.04;
   if(!armsUp){errs.push(15,16);msgs.push('Raise both arms fully overhead');}
-  const fullPos=armsUp&&kA>=65&&kA<=115;
-  if(fullPos&&rs.ph==='neutral'){rs.ph='down';}
-  else if(!fullPos&&rs.ph==='down'&&rs.cd<=0){rs.ph='neutral';rs.cd=12;countRep();}
+  const full=armsUp&&kA>=65&&kA<=115;
+  if(full&&rs.ph==='neutral'){rs.ph='down';}
+  else if(!full&&rs.ph==='down'&&rs.cd<=0){rs.ph='neutral';rs.cd=12;countRep();}
   if(rs.cd>0)rs.cd--;
-  const ok=errs.length===0;
-  return{ok,msg:ok?'Warrior I — hold it strong!':msgs[0]||'Get into Warrior position',errs};
+  return{ok:errs.length===0,msg:errs.length===0?'Warrior I — Strong!':msgs[0]||'Get into Warrior position',errs};
 }
 function checkTree(lm){
   const rH=G(lm,24),rK=G(lm,26),rAn=G(lm,28),lS=G(lm,11),rS=G(lm,12);
   if(!rH||!rK||!rAn)return{ok:false,msg:'Body not visible',errs:[]};
   const errs=[],msgs=[];
-  const rA=ang(rH,rK,rAn);
-  if(rA>148){errs.push(26,28);msgs.push('Lift one foot to inner thigh');}
+  if(ang(rH,rK,rAn)>148){errs.push(26,28);msgs.push('Lift foot to inner thigh');}
   if(Math.abs(lS.y-rS.y)>0.07){errs.push(11,12);msgs.push('Keep shoulders level');}
-  const ok=errs.length===0;
-  return{ok,msg:ok?'Tree Pose — Balanced & strong!':msgs[0],errs};
+  return{ok:errs.length===0,msg:errs.length===0?'Tree Pose — Balanced!':msgs[0],errs};
 }
 function checkDownDog(lm){
   const lS=G(lm,11),lH=G(lm,23),lK=G(lm,25),lAn=G(lm,27),lE=G(lm,13),lW=G(lm,15);
   if(!lS||!lH||!lK||!lAn)return{ok:false,msg:'Full body not visible',errs:[]};
   const errs=[],msgs=[];
   const hA=ang(lS,lH,lK);
-  if(hA<72||hA>128){errs.push(23,24);msgs.push('Hips higher — form an inverted V');}
-  if(lH.y>lS.y+0.05){errs.push(23,24);msgs.push('Push hips up and back more');}
-  if(lE&&lW){const aA=ang(lS,lE,lW);if(aA<148){errs.push(13);msgs.push('Straighten your arms');}}
-  const ok=errs.length===0;
-  return{ok,msg:ok?'Down Dog — Excellent form!':msgs[0],errs};
+  if(hA<72||hA>128){errs.push(23,24);msgs.push('Hips higher — inverted V');}
+  if(lH.y>lS.y+0.05){errs.push(23,24);msgs.push('Push hips up and back');}
+  if(lE&&lW&&ang(lS,lE,lW)<148){errs.push(13);msgs.push('Straighten your arms');}
+  return{ok:errs.length===0,msg:errs.length===0?'Down Dog — Excellent!':msgs[0],errs};
 }
 function checkSquat(lm){
   const lH=G(lm,23),lK=G(lm,25),lAn=G(lm,27),rH=G(lm,24),rK=G(lm,26),rAn=G(lm,28),lS=G(lm,11);
   if(!lH||!lK||!lAn||!rH||!rK||!rAn)return{ok:false,msg:'Show full body — step back',errs:[]};
   if(lAn.visibility<0.4||rAn.visibility<0.4)return{ok:false,msg:'Step back so ankles are visible',errs:[]};
-  const lA=ang(lH,lK,lAn),rA=ang(rH,rK,rAn),avg=(lA+rA)/2;
-  const errs=[],msgs=[];
+  const avg=(ang(lH,lK,lAn)+ang(rH,rK,rAn))/2,errs=[],msgs=[];
   if(repDown(avg,108,162))countRep();
   if(rs.ph==='down'){
-    if(avg>118){errs.push(25,26);msgs.push('Squat deeper — thighs parallel to floor');}
-    if(lS&&Math.abs(lS.x-((lH.x+rH.x)/2))>0.18){errs.push(11);msgs.push('Chest up — don\'t lean forward');}
-    const ok=errs.length===0;
-    return{ok,msg:ok?'Good squat — drive up!':msgs[0],errs};
+    if(avg>118){errs.push(25,26);msgs.push('Squat deeper — thighs parallel');}
+    if(lS&&Math.abs(lS.x-(lH.x+rH.x)/2)>0.18){errs.push(11);msgs.push('Chest up — do not lean forward');}
+    return{ok:errs.length===0,msg:errs.length===0?'Good squat — drive up!':msgs[0],errs};
   }
-  return{ok:false,msg:avg<168?'Coming up…':'Lower into squat',errs:[]};
+  return{ok:false,msg:avg<168?'Stand up straight':'Lower into squat',errs:[]};
 }
 function checkLunge(lm){
   const lH=G(lm,23),lK=G(lm,25),lAn=G(lm,27),rH=G(lm,24),rK=G(lm,26),rAn=G(lm,28);
   if(!lH||!lK||!lAn)return{ok:false,msg:'Step into frame',errs:[]};
   const lA=ang(lH,lK,lAn),rA=rH&&rK&&rAn?ang(rH,rK,rAn):180;
-  const front=Math.min(lA,rA),fErrs=lA<rA?[25]:[26];
-  const errs=[],msgs=[];
+  const front=Math.min(lA,rA),fE=lA<rA?[25]:[26],errs=[],msgs=[];
   if(repDown(front,102,160))countRep();
   if(rs.ph==='down'){
-    if(front>118){errs.push(...fErrs);msgs.push('Lower deeper into lunge');}
-    if(front<60){errs.push(...fErrs);msgs.push('Don\'t over-flex');}
-    const ok=errs.length===0;
-    return{ok,msg:ok?'Lunge — push back up!':msgs[0],errs};
+    if(front>118){errs.push(...fE);msgs.push('Lower deeper into lunge');}
+    if(front<60){errs.push(...fE);msgs.push('Control the depth');}
+    return{ok:errs.length===0,msg:errs.length===0?'Lunge — push back up!':msgs[0],errs};
   }
-  return{ok:false,msg:'Step back into lunge position',errs:[]};
+  return{ok:false,msg:'Step back into lunge',errs:[]};
 }
 function checkPlank(lm){
   const lS=G(lm,11),lH=G(lm,23),lAn=G(lm,27);
   if(!lS||!lH||!lAn)return{ok:false,msg:'Full body not visible — side view preferred',errs:[]};
-  const bA=ang(lS,lH,lAn);
-  const errs=[],msgs=[];
+  const bA=ang(lS,lH,lAn),errs=[],msgs=[];
   if(bA<152){
-    if(lH.y<lS.y-0.05){errs.push(23,24);msgs.push('Lower hips — body must be straight');}
-    else{errs.push(23,24);msgs.push('Raise hips — don\'t let them sag');}
+    if(lH.y<lS.y-0.05){errs.push(23,24);msgs.push('Lower hips — keep straight');}
+    else{errs.push(23,24);msgs.push('Raise hips — do not sag');}
   }
-  const ok=bA>=152;
-  return{ok,msg:ok?'Perfect Plank — hold it!':msgs[0]||'Align into a straight line',errs};
+  return{ok:bA>=152,msg:bA>=152?'Perfect Plank — hold it!':msgs[0]||'Align body straight',errs};
 }
 function checkJJ(lm){
   const lW=G(lm,15),rW=G(lm,16),lAn=G(lm,27),rAn=G(lm,28),lS=G(lm,11),rS=G(lm,12);
   if(!lW||!rW||!lAn||!rAn||!lS)return{ok:false,msg:'Full body must be visible',errs:[]};
-  const armsUp=lW.y<lS.y-0.06&&rW.y<rS.y-0.06;
-  const feetW=Math.abs(lAn.x-rAn.x)>0.20;
-  const open=armsUp&&feetW,close=!armsUp&&!feetW;
+  const open=lW.y<lS.y-0.06&&rW.y<rS.y-0.06&&Math.abs(lAn.x-rAn.x)>0.20;
+  const close=!(lW.y<lS.y-0.06)&&Math.abs(lAn.x-rAn.x)<0.12;
   if(open&&rs.ph==='neutral'){rs.ph='open';}
   if(close&&rs.ph==='open'&&rs.cd<=0){rs.ph='neutral';rs.cd=6;countRep();}
   if(rs.cd>0)rs.cd--;
-  const ok=open||close;
-  return{ok,msg:ok?'Jumping Jacks — great rhythm!':'Arms AND legs must move together',errs:[]};
+  return{ok:open||close,msg:open||close?'Jumping Jacks — keep rhythm!':'Sync arms AND legs',errs:[]};
 }
 function checkHighKnee(lm){
   const lH=G(lm,23),lK=G(lm,25),rH=G(lm,24),rK=G(lm,26);
   if(!lH||!lK||!rH||!rK)return{ok:false,msg:'Step into frame',errs:[]};
-  const lL=lH.y-lK.y,rL=rH.y-rK.y,maxL=Math.max(lL,rL);
+  const maxL=Math.max(lH.y-lK.y,rH.y-rK.y);
   if(maxL>0.07&&rs.ph==='neutral'){rs.ph='up';}
   if(maxL<0.01&&rs.ph==='up'&&rs.cd<=0){rs.ph='neutral';rs.cd=5;countRep();}
   if(rs.cd>0)rs.cd--;
-  const ok=maxL>0.04;
-  return{ok,msg:ok?'High Knees — keep pumping!':'Drive knees up to hip level!',errs:ok?[]:[25,26]};
+  return{ok:maxL>0.04,msg:maxL>0.04?'High Knees — keep pumping!':'Drive knees to hip level',errs:maxL>0.04?[]:[25,26]};
 }
 function checkMarch(lm){return checkHighKnee(lm);}
 function checkStep(lm){
   const lH=G(lm,23),lK=G(lm,25),lAn=G(lm,27);
   if(!lH||!lK||!lAn)return{ok:false,msg:'Step into frame',errs:[]};
+  if(repDown(ang(lH,lK,lAn),148,165))countRep();
+  document.getElementById('tmt-steps').textContent=reps;
+  return{ok:true,msg:'Step up and down — maintain pace!',errs:[]};
+}
+// ── ARTHRITIS ──
+function checkChairSquat(lm){
+  const lH=G(lm,23),lK=G(lm,25),lAn=G(lm,27),rH=G(lm,24),rK=G(lm,26),rAn=G(lm,28);
+  if(!lH||!lK||!lAn)return{ok:false,msg:'Stand in front of a chair',errs:[]};
+  const avg=(ang(lH,lK,lAn)+(rH&&rK&&rAn?ang(rH,rK,rAn):ang(lH,lK,lAn)))/2,errs=[],msgs=[];
+  if(repDown(avg,115,160))countRep(); // gentler threshold
+  if(rs.ph==='down'){
+    if(avg>130){errs.push(25,26);msgs.push('Lower a bit more — gently');}
+    return{ok:errs.length===0,msg:errs.length===0?'Good — slow and controlled!':msgs[0],errs};
+  }
+  return{ok:false,msg:'Slowly lower toward the chair',errs:[]};
+}
+function checkCalfRaise(lm){
+  const lAn=G(lm,27),rAn=G(lm,28),lK=G(lm,25),rK=G(lm,26);
+  if(!lAn||!rAn)return{ok:false,msg:'Step into frame — ankles must be visible',errs:[]};
+  // Detect heel rise: ankle y decreases (rises in image) relative to knee
+  const lLift=(lK?lK.y:0)-lAn.y,rLift=(rK?rK.y:0)-rAn.y;
+  const maxLift=Math.max(lLift,rLift);
+  if(maxLift>0.1&&rs.ph==='neutral'){rs.ph='up';}
+  if(maxLift<0.02&&rs.ph==='up'&&rs.cd<=0){rs.ph='neutral';rs.cd=8;countRep();}
+  if(rs.cd>0)rs.cd--;
+  return{ok:maxLift>0.06,msg:maxLift>0.06?'Rise fully — hold at top':'Rise up on your toes',errs:maxLift>0.06?[]:[27,28]};
+}
+function checkQuadSet(lm){
+  // Isometric — just check leg is extended
+  const lH=G(lm,23),lK=G(lm,25),lAn=G(lm,27);
+  if(!lH||!lK||!lAn)return{ok:false,msg:'Leg not visible',errs:[]};
   const kA=ang(lH,lK,lAn);
-  if(repDown(kA,148,165))countRep();
-  return{ok:true,msg:'Step up and down — steady pace!',errs:[]};
+  return{ok:kA>155,msg:kA>155?'Good — tighten thigh and hold!':'Straighten leg fully',errs:kA>155?[]:[25]};
+}
+// ── WEIGHT LOSS ──
+function checkBurpee(lm){
+  const lH=G(lm,23),lK=G(lm,25),lAn=G(lm,27),lS=G(lm,11);
+  if(!lH||!lAn)return{ok:false,msg:'Full body needed',errs:[]};
+  const hipH=lH.y; // hip high = standing, hip low = crouched/plank
+  if(hipH>0.7&&rs.ph==='neutral'){rs.ph='down';}
+  if(hipH<0.45&&rs.ph==='down'){rs.ph='up';}
+  if(hipH>0.7&&rs.ph==='up'&&rs.cd<=0){rs.ph='neutral';rs.cd=10;countRep();}
+  if(rs.cd>0)rs.cd--;
+  return{ok:true,msg:'Burpee — full range every rep!',errs:[]};
+}
+function checkMountainClimber(lm){
+  const lH=G(lm,23),lK=G(lm,25),rH=G(lm,24),rK=G(lm,26),lS=G(lm,11);
+  if(!lH||!lK||!lS)return{ok:false,msg:'Body not visible',errs:[]};
+  const maxL=Math.max(lH.y-lK.y,rH&&rK?rH.y-rK.y:0);
+  if(maxL>0.08&&rs.ph==='neutral'){rs.ph='up';}
+  if(maxL<0.01&&rs.ph==='up'&&rs.cd<=0){rs.ph='neutral';rs.cd=4;countRep();}
+  if(rs.cd>0)rs.cd--;
+  return{ok:maxL>0.04,msg:maxL>0.04?'Drive knees fast!':'Knees to chest faster',errs:[]};
+}
+function checkSideLunge(lm){
+  const lH=G(lm,23),lK=G(lm,25),lAn=G(lm,27),rH=G(lm,24),rK=G(lm,26),rAn=G(lm,28);
+  if(!lH||!lK||!lAn)return{ok:false,msg:'Step into frame',errs:[]};
+  const lA=ang(lH,lK,lAn),rA=rH&&rK&&rAn?ang(rH,rK,rAn):180;
+  const front=Math.min(lA,rA);
+  if(repDown(front,108,165))countRep();
+  if(rs.ph==='down')return{ok:front<=120,msg:front<=120?'Good side lunge!':'Bend knee more',errs:front<=120?[]:[25,26]};
+  return{ok:false,msg:'Step wide to the side',errs:[]};
+}
+function checkJumpSquat(lm){
+  const lH=G(lm,23),lK=G(lm,25),lAn=G(lm,27),rH=G(lm,24),rK=G(lm,26),rAn=G(lm,28);
+  if(!lH||!lK||!lAn)return{ok:false,msg:'Full body needed',errs:[]};
+  const avg=(ang(lH,lK,lAn)+(rH&&rK&&rAn?ang(rH,rK,rAn):ang(lH,lK,lAn)))/2;
+  // Hip height detects jump (hips rise briefly)
+  const hipY=lH.y;
+  if(avg<=110&&rs.ph==='neutral'){rs.ph='down';}
+  if(hipY<0.38&&rs.ph==='down'){rs.ph='jump';}
+  if(hipY>0.55&&rs.ph==='jump'&&rs.cd<=0){rs.ph='neutral';rs.cd=8;countRep();}
+  if(rs.cd>0)rs.cd--;
+  return{ok:true,msg:rs.ph==='down'?'Squat deep then JUMP!':'Jump squat — land softly!',errs:[]};
 }
 
-// ═══════════════════════════════════════════════════════
-//  REP + HOLD HANDLERS  (unchanged)
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+//  REP + HOLD HANDLERS
+// ══════════════════════════════════════════════════
 function countRep(){
   reps++;
   const el=document.getElementById('rep-count');
-  el.textContent=reps;
-  el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),320);
+  el.textContent=reps;el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),300);
   const fl=document.getElementById('rep-flash');
   fl.textContent=reps;fl.classList.remove('show');void fl.offsetWidth;fl.classList.add('show');
-  speakSafe(reps+'. '+( reps%5===0?'Great, keep going!':'' ));
-  updateAIInsight();
+  if(reps%5===0) speakSafe(reps+'. Great work, keep going!');
+  else speakSafe(String(reps));
   checkDone();
 }
 function handleOk(){
   if(!holdT0)holdT0=Date.now();
   holdAcc=(Date.now()-holdT0)/1000;
   document.getElementById('hold-time').textContent=holdAcc.toFixed(1)+'s';
-  if(curEx.type==='hold'&&holdAcc>=curEx.targetHold){
-    holdT0=null;holdAcc=0;
-    document.getElementById('hold-time').textContent='0s';
-    countRep();
-  }
+  if(curEx.type==='hold'&&holdAcc>=curEx.targetHold){holdT0=null;holdAcc=0;document.getElementById('hold-time').textContent='0s';countRep();}
 }
 function handleBad(){holdT0=null;holdAcc=0;document.getElementById('hold-time').textContent='0s';}
 function checkDone(){if(reps>=curEx.targetReps)setTimeout(nextExercise,600);}
@@ -1322,133 +1445,99 @@ function nextExercise(){
   exIdx++;
   if(exIdx>=sessionExs.length){finishSession();return;}
   curEx=sessionExs[exIdx];
-  reps=0;correctF=0;totalF=0;holdT0=null;holdAcc=0;curStreak=0;
+  reps=0;correctF=0;totalF=0;holdT0=null;holdAcc=0;curStreak=0;motionStoppedFrames=0;motionHistory=[];
   initRS();
-  document.getElementById('rep-count').textContent='0';
-  document.getElementById('hold-time').textContent='0s';
-  document.getElementById('acc-pct').textContent='—';
-  setGuide();
+  ['rep-count','hold-time','acc-pct'].forEach((id,i)=>document.getElementById(id).textContent=['0','0s','—'][i]);
+  setGuide();setHeader();setCalibHint();
   setFB('neutral','⏳',curEx.icon+' '+curEx.name+' — Get ready!');
-  speakSafe('Next: '+curEx.name,true);
+  speakSafe('Next: '+curEx.name+'. '+curEx.startHint,true);
 }
 function skipExercise(){if(phase==='active')nextExercise();}
 
-// ═══════════════════════════════════════════════════════
-//  SCORING  (unchanged)
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+//  SCORING
+// ══════════════════════════════════════════════════
 function updateScore(){
   if(phase!=='active')return;
   const acc=totalF>0?correctF/totalF:0;
   const fm=Math.min(40,Math.round(acc*40));
-  const rc=Math.min(25,reps*(curEx.sm.rs||5));
-  const tc=Math.min(15,(elapsed/(curEx.sm.mt||180))*15);
-  const en=Math.round(rc+tc);
+  const en=Math.round(Math.min(25,reps*(curEx.sm.rs||5))+Math.min(15,(elapsed/(curEx.sm.mt||180))*15));
   const cn=Math.min(20,Math.round(acc*acc*20));
   const tot=Math.min(100,fm+en+cn);
   scoreD={form:fm,end:en,con:cn,tot};
-  document.getElementById('sf').textContent=fm;
-  document.getElementById('se').textContent=en;
-  document.getElementById('sc2').textContent=cn;
+  document.getElementById('sf').textContent=fm;document.getElementById('se').textContent=en;document.getElementById('sc2').textContent=cn;
   document.getElementById('score-num').textContent=tot;
-  document.getElementById('bf').style.width=(fm/40*100)+'%';
-  document.getElementById('be').style.width=(en/40*100)+'%';
-  document.getElementById('bc').style.width=(cn/20*100)+'%';
-  document.getElementById('score-ring').style.strokeDashoffset=175.9-(tot/100)*175.9;
+  document.getElementById('bf').style.width=(fm/40*100)+'%';document.getElementById('be').style.width=(en/40*100)+'%';document.getElementById('bc').style.width=(cn/20*100)+'%';
+  document.getElementById('score-ring').style.strokeDashoffset=163.4-(tot/100)*163.4;
   document.getElementById('acc-pct').textContent=totalF>0?Math.round(acc*100)+'%':'—';
-  if(mode==='tmt'){
-    const m=mets(reps,elapsed);
-    document.getElementById('tmt-mets').textContent=m.toFixed(1);
-    document.getElementById('tmt-cat').textContent=metsCat(m);
-  }
+  if(mode==='tmt'){const m=mets(reps,elapsed);document.getElementById('tmt-mets').textContent=m.toFixed(1);document.getElementById('tmt-cat').textContent=metsCat(m);}
 }
 
-// ═══════════════════════════════════════════════════════
-//  TMT & GRADE  (unchanged)
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+//  TMT + GRADE
+// ══════════════════════════════════════════════════
 function mets(steps,sec){if(sec<1)return 0;return Math.min(16,Math.max(1,.35*(steps/sec)*60+1));}
 function metsCat(m){if(m<4)return'Poor';if(m<6)return'Below Avg';if(m<8)return'Average';if(m<10)return'Good';if(m<12)return'Excellent';return'Superior';}
 function metsInterp(m){if(m<5)return'High CV risk — see physician';if(m<7)return'Moderate risk — lifestyle change advised';if(m<9)return'Acceptable functional capacity';if(m<11)return'Good cardiac reserve';return'Excellent cardiovascular fitness';}
 function grade(s){
-  if(s>=90)return{g:'S — Superb',c:'#00FF88'};
-  if(s>=80)return{g:'A — Excellent',c:'#00E5FF'};
-  if(s>=65)return{g:'B — Good',c:'#7B61FF'};
-  if(s>=50)return{g:'C — Fair',c:'#FFD23F'};
-  if(s>=35)return{g:'D — Needs Work',c:'#FF8C42'};
-  return{g:'F — Try Again',c:'#FF3B6B'};
+  if(s>=90)return{g:'S — Superb',c:'#00FF88'};if(s>=80)return{g:'A — Excellent',c:'#00E5FF'};
+  if(s>=65)return{g:'B — Good',c:'#7B61FF'};if(s>=50)return{g:'C — Fair',c:'#FFD23F'};
+  if(s>=35)return{g:'D — Needs Work',c:'#FF8C42'};return{g:'F — Try Again',c:'#FF3B6B'};
 }
 
-// ═══════════════════════════════════════════════════════
-//  TIMER  (unchanged)
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+//  TIMER
+// ══════════════════════════════════════════════════
 function startTimer(){
   t0=Date.now();
   tTimer=setInterval(()=>{
     if(phase==='active'){
       elapsed=Math.floor((Date.now()-t0)/1000);
-      const m=String(Math.floor(elapsed/60)).padStart(2,'0');
-      const s=String(elapsed%60).padStart(2,'0');
-      document.getElementById('timer').textContent=m+':'+s;
+      document.getElementById('timer').textContent=String(Math.floor(elapsed/60)).padStart(2,'0')+':'+String(elapsed%60).padStart(2,'0');
     }
   },500);
 }
 function stopTimer(){clearInterval(tTimer);}
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 //  CONTROLS
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 function togglePause(){
-  if(phase==='active'){
-    phase='paused';
-    document.getElementById('pause-btn').textContent='▶ Resume';
-    setStatusBar('s-cal','Paused');
-    setFB('neutral','⏸','Session paused');
-    if(window.speechSynthesis)window.speechSynthesis.cancel();
-  } else if(phase==='paused'){
-    phase='active';
-    t0=Date.now()-elapsed*1000;
-    document.getElementById('pause-btn').textContent='⏸ Pause';
-    setStatusBar('s-active','Tracking Active');
-    setFB('neutral','▶','Resuming…');
-  }
+  if(phase==='active'){phase='paused';document.getElementById('pause-btn').textContent='▶ Resume';setSB('s-cal','Paused');setFB('neutral','⏸','Session paused');if(window.speechSynthesis)window.speechSynthesis.cancel();}
+  else if(phase==='paused'){phase='active';t0=Date.now()-elapsed*1000;document.getElementById('pause-btn').textContent='⏸ Pause';setSB('s-active','Tracking Active');setFB('neutral','▶','Resuming…');}
 }
 function finishSession(){
-  phase='done';stopTimer();
+  phase='done';stopTimer();if(aiInsightInterval){clearInterval(aiInsightInterval);aiInsightInterval=null;}
   if(window.speechSynthesis)window.speechSynthesis.cancel();
-  speakSafe('Session complete. Great work!',true);
+  speakSafe('Session complete. Well done!',true);
   setTimeout(showResults,800);
 }
 function endSession(){
-  phase='done';stopTimer();
-  if(cdInterval)clearInterval(cdInterval);
+  phase='done';stopTimer();clearCountdown();
+  if(aiInsightInterval){clearInterval(aiInsightInterval);aiInsightInterval=null;}
   if(cam){try{cam.stop();}catch(e){}}
   if(mStream)mStream.getTracks().forEach(t=>t.stop());
   if(window.speechSynthesis)window.speechSynthesis.cancel();
   showResults();
 }
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 //  RESULTS
-// ═══════════════════════════════════════════════════════
-function showResults(){
-  const names={yoga:'Yoga Session',exercise:'Exercise Session',cardio:'Cardio Training',tmt:'TMT Endurance Test'};
+// ══════════════════════════════════════════════════
+async function showResults(){
+  const names={yoga:'Yoga Session',exercise:'Exercise Session',cardio:'Cardio Training',arthritis:'Arthritis Care Session',weightloss:'Weight Loss Session',tmt:'TMT Endurance Test'};
   const acc=totalF>0?Math.round((correctF/totalF)*100):0;
   const m=mets(reps,elapsed);
   const{g,c}=grade(scoreD.tot);
   const mm=Math.floor(elapsed/60),ss=elapsed%60;
-
   document.getElementById('r-session').textContent=names[mode]||'Session';
-  document.getElementById('r-score').textContent=scoreD.tot;
-  document.getElementById('r-score').style.color=c;
+  document.getElementById('r-score').textContent=scoreD.tot;document.getElementById('r-score').style.color=c;
   const gEl=document.getElementById('r-grade');
-  gEl.textContent=g;
-  gEl.style.cssText=`background:${c}22;color:${c};border:1px solid ${c};padding:4px 14px;border-radius:999px;font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em`;
+  gEl.textContent=g;gEl.style.cssText=`background:${c}22;color:${c};border:1px solid ${c};padding:3px 12px;border-radius:999px;font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em`;
   document.getElementById('r-reps').textContent=reps;
   document.getElementById('r-time').textContent=mm+':'+(ss<10?'0':'')+ss;
   document.getElementById('r-acc').textContent=acc+'%';
-
-  // AI insight in results
-  document.getElementById('r-insight-text').textContent=updateAIInsight();
-
+  // TMT
   const tmtEl=document.getElementById('r-tmt');
   if(mode==='tmt'||elapsed>=60){
     tmtEl.style.display='block';
@@ -1456,16 +1545,32 @@ function showResults(){
     document.getElementById('r-fc').textContent=metsCat(m);
     document.getElementById('r-cvcat').textContent=m>=8?'Normal':m>=5?'Borderline':'Reduced';
     document.getElementById('r-interp').textContent=metsInterp(m);
-  } else {
-    tmtEl.style.display='none';
+  }
+  // AI summary
+  if(geminiConnected&&aiOn){
+    const aiBlock=document.getElementById('r-ai-block');
+    aiBlock.classList.add('show');
+    document.getElementById('r-ai-text').textContent='Analysing your session…';
+    const summary=await getAISessionSummary();
+    document.getElementById('r-ai-text').textContent=summary||'Great session! Keep up the consistent practice.';
   }
   document.getElementById('results-overlay').classList.add('show');
 }
 
-function retrySession(){
-  document.getElementById('results-overlay').classList.remove('show');
-  fullReset();startSession();
+// ══════════════════════════════════════════════════
+//  FEEDBACK
+// ══════════════════════════════════════════════════
+function rateStar(n){
+  feedbackRating=n;
+  document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('on',i<n));
 }
+function submitFeedback(){
+  const txt=document.getElementById('feedback-text').value.trim();
+  console.log('Session Feedback:',{rating:feedbackRating,comment:txt,mode,exercise:curEx?.name,score:scoreD.tot});
+  document.querySelector('.feedback-block').innerHTML='<div style="text-align:center;padding:10px;color:var(--green);font-weight:700">✓ Thank you for your feedback!</div>';
+}
+
+function retrySession(){document.getElementById('results-overlay').classList.remove('show');fullReset();startSession();}
 function goHome(){
   document.getElementById('results-overlay').classList.remove('show');
   if(cam){try{cam.stop();}catch(e){}}
@@ -1476,80 +1581,58 @@ function goHome(){
   document.getElementById('landing').style.display='flex';
 }
 
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 //  RESET
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 function resetState(){
-  reps=0;correctF=0;totalF=0;holdT0=null;holdAcc=0;
-  elapsed=0;calibStill=0;lmSnap=null;smoothLm=null;
-  scoreD={form:0,end:0,con:0,tot:0};
-  maxStreak=0;curStreak=0;lastFeedbackType='';voiceLastMsg='';
+  reps=0;correctF=0;totalF=0;holdT0=null;holdAcc=0;elapsed=0;
+  calibStill=0;lmSnap=null;smoothLm=null;motionHistory=[];motionStoppedFrames=0;
+  scoreD={form:0,end:0,con:0,tot:0};maxStreak=0;curStreak=0;lastFBType='';lastFBText='';voiceLastMsg='';feedbackRating=0;
   initRS();
-  // DOM resets
-  document.getElementById('rep-count').textContent='0';
-  document.getElementById('hold-time').textContent='0s';
-  document.getElementById('acc-pct').textContent='—';
-  document.getElementById('score-num').textContent='0';
-  document.getElementById('sf').textContent='0';
-  document.getElementById('se').textContent='0';
-  document.getElementById('sc2').textContent='0';
-  document.getElementById('score-ring').style.strokeDashoffset='175.9';
-  document.getElementById('timer').textContent='00:00';
+  const resets=[['rep-count','0'],['hold-time','0s'],['acc-pct','—'],['score-num','0'],['sf','0'],['se','0'],['sc2','0'],['timer','00:00']];
+  resets.forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=v;});
+  document.getElementById('score-ring').style.strokeDashoffset='163.4';
+  document.getElementById('prog-ring').style.strokeDashoffset='125.7';
   document.getElementById('pause-btn').textContent='⏸ Pause';
   document.getElementById('cam-init').style.display='flex';
-  document.getElementById('cam-msg').textContent='Requesting camera access…';
+  document.getElementById('cam-msg').textContent='Requesting camera…';
   document.getElementById('calib-overlay').classList.remove('hidden');
   document.getElementById('calib-icon').textContent='🧍';
-  document.getElementById('calib-title').textContent='Position Your Body';
-  document.getElementById('calib-sub').textContent='Stand back so your full body — head to ankles — is visible.';
+  document.getElementById('calib-title').textContent='Position Yourself';
   document.getElementById('cd-wrap').style.display='none';
   document.getElementById('tmt-strip').classList.remove('show');
   document.getElementById('dir-arrow').classList.remove('show');
+  document.getElementById('motion-warn').classList.remove('show');
   document.getElementById('form-score-val').textContent='—';
   document.getElementById('form-score-val').style.color='var(--muted)';
-  document.getElementById('prog-ring').style.strokeDashoffset='138.2';
-  document.getElementById('prog-val').textContent='0';
-  setChk('chk-body',false);setChk('chk-stand',false);setChk('chk-still',false);
-  setStatusBar('s-none','Not Detected');
+  document.getElementById('ai-bubble').classList.remove('show');
+  document.getElementById('ai-insight-strip').classList.remove('show');
+  document.getElementById('r-ai-block').classList.remove('show');
+  document.getElementById('r-tmt').style.display='none';
+  setChk('chk-body',false);setChk('chk-pose',false);setChk('chk-still',false);
+  setSB('s-none','Not Detected');
   setFB('neutral','⏳','Calibrating…');
 }
-function fullReset(){
-  phase='idle';cam=null;mStream=null;exIdx=0;
-  if(cdInterval)clearInterval(cdInterval);
-  clearCountdown();
-  resetState();
-}
+function fullReset(){phase='idle';cam=null;mStream=null;exIdx=0;clearCountdown();if(aiInsightInterval){clearInterval(aiInsightInterval);aiInsightInterval=null;}resetState();}
 
-// ═══════════════════════════════════════════════════════
-//  UI HELPERS
-// ═══════════════════════════════════════════════════════
-let lastFBType='',lastFBText='';
+// ══════════════════════════════════════════════════
+//  FEEDBACK PILL (throttled)
+// ══════════════════════════════════════════════════
 function setFB(type,icon,text){
-  // Avoid unnecessary DOM updates
   if(type===lastFBType&&text===lastFBText) return;
   lastFBType=type;lastFBText=text;
   const pill=document.getElementById('fb-pill');
   pill.className='fb-pill '+type;
   document.getElementById('fb-icon').textContent=icon;
   document.getElementById('fb-text').textContent=text;
-  // Micro-animation
-  if(type==='incorrect'){
-    pill.classList.remove('shake');
-    void pill.offsetWidth;
-    pill.classList.add('shake');
-  }
+  if(type==='incorrect'){pill.classList.remove('shake');void pill.offsetWidth;pill.classList.add('shake');}
 }
 
-function showLoad(msg){
-  document.getElementById('loading-msg').textContent=msg;
-  document.getElementById('loading-screen').classList.add('show');
-}
+function showLoad(m){document.getElementById('loading-msg').textContent=m;document.getElementById('loading-screen').classList.add('show');}
 function hideLoad(){document.getElementById('loading-screen').classList.remove('show');}
 
-// Pre-warm speech voices on user gesture
-document.addEventListener('click',()=>{
-  if(window.speechSynthesis)window.speechSynthesis.getVoices();
-},{once:true});
+// Pre-warm voices
+document.addEventListener('click',()=>{if(window.speechSynthesis)window.speechSynthesis.getVoices();},{once:true});
 </script>
 </body>
 </html>
